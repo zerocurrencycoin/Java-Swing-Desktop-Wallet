@@ -63,6 +63,7 @@ import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
 import com.vaklinov.zcashui.ZCashInstallationObserver.DAEMON_STATUS;
 import com.vaklinov.zcashui.ZCashInstallationObserver.DaemonInfo;
 import com.vaklinov.zcashui.ZCashInstallationObserver.InstallationDetectionException;
+import javax.swing.JPanel;
 
 
 /**
@@ -92,6 +93,9 @@ public class ZCashUI
     private AddressesPanel   addresses;
     private SendCashPanel    sendPanel;
     private AddressBookPanel addressBookPanel;
+    private PreferencesPanel preferencesPanel;
+    
+    private static WalletPreferences preferences;
     
     JTabbedPane tabs;
 
@@ -107,14 +111,13 @@ public class ZCashUI
         
         ClassLoader cl = this.getClass().getClassLoader();
 
-        // TODO: icon for zero
-        //this.setIconImage(new ImageIcon(cl.getResource("images/zcash-logo-large.png")).getImage());
+        this.setIconImage(new ImageIcon(cl.getResource("images/zero-logo-black-yellow2.png")).getImage());
 
         Container contentPane = this.getContentPane();
 
         errorReporter = new StatusUpdateErrorReporter(this);
-        installationObserver = new ZCashInstallationObserver(OSUtil.getProgramDirectory());
-        clientCaller = new ZCashClientCaller(OSUtil.getProgramDirectory());
+        installationObserver = new ZCashInstallationObserver(preferences.commandLineToolsDir());
+        clientCaller = new ZCashClientCaller(preferences.commandLineToolsDir());
 
         // Build content
         tabs = new JTabbedPane();
@@ -133,11 +136,14 @@ public class ZCashUI
         tabs.addTab("Address book ",
     		        new ImageIcon(cl.getResource("images/address-book.png")),
     		        addressBookPanel = new AddressBookPanel(sendPanel, tabs));
+        tabs.addTab("Preferences",
+		        	new ImageIcon(cl.getResource("images/preferences.png")),
+	    			preferencesPanel = new PreferencesPanel(preferences));
         contentPane.add(tabs);
 
         this.walletOps = new WalletOperations(
             	this, tabs, dashboard, addresses, sendPanel, installationObserver, clientCaller, errorReporter);
-
+        
         this.setSize(new Dimension(870, 427));
 
         // Build menu
@@ -357,6 +363,7 @@ public class ZCashUI
         ZCashUI.this.setVisible(false);
         ZCashUI.this.dispose();
 
+        preferences.savePreferences();
         System.exit(0);
     }
 
@@ -396,14 +403,16 @@ public class ZCashUI
 	            }
             }
             
+            preferences = new WalletPreferences(os);
+            
             // If zcashd is currently not running, do a startup of the daemon as a child process
             // It may be started but not ready - then also show dialog
             ZCashInstallationObserver initialInstallationObserver = 
-            	new ZCashInstallationObserver(OSUtil.getProgramDirectory());
+            	new ZCashInstallationObserver(preferences.commandLineToolsDir());
             DaemonInfo zcashdInfo = initialInstallationObserver.getDaemonInfo();
             initialInstallationObserver = null;
             
-            ZCashClientCaller initialClientCaller = new ZCashClientCaller(OSUtil.getProgramDirectory());
+            ZCashClientCaller initialClientCaller = new ZCashClientCaller(preferences.commandLineToolsDir());
             boolean daemonStartInProgress = false;
             try
             {
