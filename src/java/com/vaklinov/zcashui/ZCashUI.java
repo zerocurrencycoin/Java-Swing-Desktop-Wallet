@@ -144,7 +144,7 @@ public class ZCashUI
         this.walletOps = new WalletOperations(
             	this, tabs, dashboard, addresses, sendPanel, installationObserver, clientCaller, errorReporter);
         
-        this.setSize(new Dimension(870, 427));
+        this.setSize(new Dimension(900, 427));
 
         // Build menu
         JMenuBar mb = new JMenuBar();
@@ -374,34 +374,38 @@ public class ZCashUI
         {
         	OS_TYPE os = OSUtil.getOSType();
         	
+        	preferences = new WalletPreferences(os);
+        	
             System.out.println("Starting ZERO Swing Wallet ...");
             System.out.println("OS: " + System.getProperty("os.name") + " = " + os);
             System.out.println("Current directory: " + new File(".").getCanonicalPath());
             System.out.println("Class path: " + System.getProperty("java.class.path"));
             System.out.println("Environment PATH: " + System.getenv("PATH"));
 
-            // Look and feel settings - for now a custom OS-look and feel is set for Windows,
-            // Mac OS will follow later.
-            if (os == OS_TYPE.WINDOWS)
-            {
-            	// Custom Windows L&F and font settings
-            	UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            	
-            	// This font looks good but on Windows 7 it misses some chars like the stars...
-            	//FontUIResource font = new FontUIResource("Lucida Sans Unicode", Font.PLAIN, 11);
-            	//UIManager.put("Table.font", font);
-            } else
-            {            
-	            for (LookAndFeelInfo ui : UIManager.getInstalledLookAndFeels())
-	            {
-	                System.out.println("Available look and feel: " + ui.getName() + " " + ui.getClassName());
-	                if (ui.getName().equals("Nimbus"))
-	                {
-	                    UIManager.setLookAndFeel(ui.getClassName());
-	                    break;
-	                };
-	            }
-            }
+        	if (os == OS_TYPE.WINDOWS)
+        	{
+        		// Custom Windows L&F and font settings
+        		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+
+        		// This font looks good but on Windows 7 it misses some chars like the stars...
+        		//FontUIResource font = new FontUIResource("Lucida Sans Unicode", Font.PLAIN, 11);
+        		//UIManager.put("Table.font", font);
+        	} else
+        		if (os == OS_TYPE.MAC_OS)
+        		{
+        			UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
+        		} else
+        		{            
+        			for (LookAndFeelInfo ui : UIManager.getInstalledLookAndFeels())
+        			{
+        				System.out.println("Available look and feel: " + ui.getName() + " " + ui.getClassName());
+        				if (ui.getName().equals("Nimbus"))
+        				{
+        					UIManager.setLookAndFeel(ui.getClassName());
+        					break;
+        				};
+        			}
+        		}
             
             preferences = new WalletPreferences(os);
             
