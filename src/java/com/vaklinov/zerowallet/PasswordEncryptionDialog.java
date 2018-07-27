@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 
 import java.awt.Font;
@@ -46,6 +46,7 @@ import javax.swing.JTextField;
 public class PasswordEncryptionDialog
 	extends PasswordDialog
 {
+	private static final long serialVersionUID = -1094227573854547047L;
 	protected JTextField passwordConfirmationField = null;
 	
 	public PasswordEncryptionDialog(JFrame parent)

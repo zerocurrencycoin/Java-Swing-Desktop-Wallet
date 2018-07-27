@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -49,6 +49,8 @@ import javax.swing.KeyStroke;
 public class AddressTable 
 	extends DataTable 
 {	
+	private static final long serialVersionUID = 6977857316339762068L;
+
 	public AddressTable(final Object[][] rowData, final Object[] columnNames, 
 			            final ZCashClientCaller caller)
 	{
@@ -112,7 +114,7 @@ public class AddressTable
 						
 					} catch (Exception ex)
 					{
-						ex.printStackTrace();
+						Log.error("Unexpected error: ", ex);
 						// TODO: report exception to user
 					}
 				} else

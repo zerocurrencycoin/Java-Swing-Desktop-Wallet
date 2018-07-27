@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 
 import java.awt.BorderLayout;
@@ -43,7 +43,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
@@ -56,6 +55,8 @@ import javax.swing.JTextField;
 public class SingleKeyImportDialog
 	extends JDialog
 {
+	private static final long serialVersionUID = -3437897758702621005L;
+
 	protected boolean isOKPressed = false;
 	protected String  key    = null;
 	
@@ -109,7 +110,7 @@ public class SingleKeyImportDialog
 		tempPanel.add(this.lowerLabel = new JLabel(
 			"<html><span style=\"font-weight:bold\">" + 
 		    "Warning:</span> Private key import is a slow operation that " +
-		    "requires blockchain rescanning (may take many minutes). The GUI " +
+		    "requires blockchain rescanning (may take many minutes). <br/>The GUI " +
 			"will not be usable for other functions during this time</html>"), 
 			BorderLayout.CENTER);
 		controlsPanel.add(tempPanel);
@@ -160,6 +161,8 @@ public class SingleKeyImportDialog
 		this.setSize(740, 210);
 		this.validate();
 		this.repaint();
+		
+		this.pack();
 	}
 	
 	
@@ -207,7 +210,7 @@ public class SingleKeyImportDialog
 							JOptionPane.INFORMATION_MESSAGE);		
 				} catch (Exception e)
 				{
-					e.printStackTrace();
+					Log.error("An error occurred when importing private key", e);
 					
 					JOptionPane.showMessageDialog(
 						SingleKeyImportDialog.this.getRootPane().getParent(), 

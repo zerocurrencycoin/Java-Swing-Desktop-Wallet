@@ -1,20 +1,13 @@
 // Code was originally written by developer - https://github.com/zlatinb
 // Taken from repository https://github.com/zlatinb/zcash-swing-wallet-ui under an MIT license
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Font;
-import java.io.File;
+import java.awt.FlowLayout;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -22,28 +15,26 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JWindow;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
-import com.vaklinov.zcashui.OSUtil.OS_TYPE;
-import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
 
 
 public class StartupProgressDialog extends JFrame {
-    
 
-    private static final int POLL_PERIOD = 1500;
+	private static final long serialVersionUID = 1739632941141312210L;
+
+	private static final int POLL_PERIOD = 1500;
     private static final int STARTUP_ERROR_CODE = -28;
     
     private BorderLayout borderLayout1 = new BorderLayout();
-    private JLabel imageLabel = new JLabel();
     private JLabel progressLabel = new JLabel();
     private JPanel southPanel = new JPanel();
     private BorderLayout southPanelLayout = new BorderLayout();
     private JProgressBar progressBar = new JProgressBar();
-    private ImageIcon imageIcon;
     
     private final ZCashClientCaller clientCaller;
     
@@ -51,29 +42,29 @@ public class StartupProgressDialog extends JFrame {
     {
         this.clientCaller = clientCaller;
         
-        //URL iconUrl = this.getClass().getClassLoader().getResource("images/zcash-logo-large.png");
-        //imageIcon = new ImageIcon(iconUrl);
-        //imageLabel.setIcon(imageIcon);
-        imageLabel.setText("\u01B5ERO");
-        imageLabel.setFont(new Font("Helvetica", Font.BOLD | Font.ITALIC, 110));
-        imageLabel.setBorder(BorderFactory.createEmptyBorder(16, 16, 0, 16));
         Container contentPane = getContentPane();
         contentPane.setLayout(borderLayout1);
         southPanel.setLayout(southPanelLayout);
         southPanel.setBorder(BorderFactory.createEmptyBorder(0, 16, 16, 16));
-        contentPane.add(imageLabel, BorderLayout.NORTH);
 		JLabel zcashWalletLabel = new JLabel(
-			"<html><span style=\"font-style:italic;font-weight:bold;font-size:22px\">" + 
-		    "ZERO Swing Wallet UI</span></html>");
+			"<html><span style=\"font-weight:bold;font-size:2.65em\">" + 
+		    "Ƶero Wallet</span></html>");
+		zcashWalletLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+		zcashWalletLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+		zcashWalletLabel.setIcon(new ImageIcon(StartupProgressDialog.class.getResource("/images/zero-logo-black-yellow.png")));
 		zcashWalletLabel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
-		contentPane.add(zcashWalletLabel, BorderLayout.CENTER);
+		// todo - place in a panel with flow center
+		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 1, 1));
+		tempPanel.add(zcashWalletLabel);
+		contentPane.add(tempPanel, BorderLayout.CENTER);
         contentPane.add(southPanel, BorderLayout.SOUTH);
         progressBar.setIndeterminate(true);
         southPanel.add(progressBar, BorderLayout.NORTH);
         progressLabel.setText("Starting...");
         southPanel.add(progressLabel, BorderLayout.SOUTH);
-        setLocationRelativeTo(null);
+        
         pack();
+        setLocationRelativeTo(null);
         
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     }
@@ -89,7 +80,7 @@ public class StartupProgressDialog extends JFrame {
 //                performOSXBundleLaunch();
 //        }
         
-        System.out.println("Splash: checking if zcashd is already running...");
+        Log.info("Splash: checking if zcashd is already running...");
         boolean shouldStartZCashd = false;
         try {
             clientCaller.getDaemonRawRuntimeInfo();
@@ -104,13 +95,13 @@ public class StartupProgressDialog extends JFrame {
         }
         
         if (!shouldStartZCashd) {
-            System.out.println("Splash: zcashd already running...");
+        	Log.info("Splash: zcashd already running...");
             // What if started by hand but taking long to initialize???
 //            doDispose();
 //            return;
         } else
         {
-        	System.out.println("Splash: zcashd will be started...");
+        	Log.info("Splash: zcashd will be started...");
         }
         
         final Process daemonProcess = 
@@ -152,7 +143,7 @@ public class StartupProgressDialog extends JFrame {
         if (daemonProcess != null) // Shutdown only if we started it
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                System.out.println("Stopping zcashd because we started it - now it is alive: " + 
+            	Log.info("Stopping zcashd because we started it - now it is alive: " + 
                 		           StartupProgressDialog.this.isAlive(daemonProcess));
                 try 
                 {
@@ -162,7 +153,7 @@ public class StartupProgressDialog extends JFrame {
 	                while (!StartupProgressDialog.this.waitFor(daemonProcess, 3000))
 	                {
 	                	long end = System.currentTimeMillis();
-	                	System.out.println("Waiting for " + ((end - start) / 1000) + " seconds for zcashd to exit...");
+	                	Log.info("Waiting for " + ((end - start) / 1000) + " seconds for zcashd to exit...");
 	                	
 	                	if (end - start > 10 * 1000)
 	                	{
@@ -177,15 +168,14 @@ public class StartupProgressDialog extends JFrame {
 	                }
 	            
 	                if (StartupProgressDialog.this.isAlive(daemonProcess)) {
-	                    	System.out.println("zcashd is still alive although we tried to stop it. " +
+	                	Log.info("zcashd is still alive although we tried to stop it. " +
 	                                           "Hopefully it will stop later!");
 	                        //System.out.println("zcashd is still alive, killing forcefully");
 	                        //daemonProcess.destroyForcibly();
 	                    } else
-	                        System.out.println("zcashd shut down successfully");
+	                    	Log.info("zcashd shut down successfully");
                 } catch (Exception bad) {
-                    System.out.println("Couldn't stop zcashd!");
-                    bad.printStackTrace();
+                	Log.error("Couldn't stop zcashd!", bad);
                 }
             }
         });
@@ -210,19 +200,6 @@ public class StartupProgressDialog extends JFrame {
 			}
 	     });
     }
-    
-    // TODO: Unused for now
-    private void performOSXBundleLaunch() throws IOException, InterruptedException {
-        System.out.println("performing OSX Bundle-specific launch");
-        File bundlePath = new File(System.getProperty("zcash.location.dir"));
-        bundlePath = bundlePath.getCanonicalFile();
-        
-        // run "first-run.sh"
-        File firstRun = new File(bundlePath,"first-run.sh");
-        Process firstRunProcess = Runtime.getRuntime().exec(firstRun.getCanonicalPath());
-        firstRunProcess.waitFor();
-    }
-    
     
     // Custom code - to allow JDK7 compilation.
     public boolean isAlive(Process p) 
@@ -266,7 +243,7 @@ public class StartupProgressDialog extends JFrame {
 				} catch (InterruptedException ie)
 				{
 					// One of the rare cases where we do nothing
-					ie.printStackTrace();
+					Log.error("Unexpected error: ", ie);
 				}
 				
 				endWait = System.currentTimeMillis();

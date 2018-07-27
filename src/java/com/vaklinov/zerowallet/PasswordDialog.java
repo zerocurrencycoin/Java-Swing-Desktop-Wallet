@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 
 import java.awt.BorderLayout;
@@ -55,6 +55,7 @@ import javax.swing.JTextField;
 public class PasswordDialog
 	extends JDialog
 {
+	private static final long serialVersionUID = -5824609650933724892L;
 	protected boolean isOKPressed = false;
 	protected String  password    = null;
 	

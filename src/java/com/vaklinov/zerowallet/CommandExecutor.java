@@ -26,55 +26,97 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 
 /**
- * Reporter for periodic errors. Will later have options to filter errors etc.
+ * Executes a command and retruns the result.
  * 
  * @author Ivan Vaklinov <ivan@vaklinov.com>
  */
-public class StatusUpdateErrorReporter 
+public class CommandExecutor 
 {	
-	private JFrame parent;
-	private long lastReportedErrroTime = 0;
+	private String args[];
 	
-	public StatusUpdateErrorReporter(JFrame parent)
+	public CommandExecutor(String args[])
+		throws IOException
 	{
-		this.parent = parent;
+		this.args = args;
+	}		
+	
+	
+	public Process startChildProcess() 
+		throws IOException 
+	{
+	    return Runtime.getRuntime().exec(args);
 	}
 	
-	public void reportError(Exception e)
-	{
-		reportError(e, true);
-	}	
 	
-	public void reportError(Exception e, boolean isDueToAutomaticUpdate)
+	public String execute()
+		throws IOException, InterruptedException
 	{
-		e.printStackTrace();
+		final StringBuffer result = new StringBuffer();
 		
-		// TODO: Error logging
-		long time = System.currentTimeMillis();
+		Runtime rt = Runtime.getRuntime();
+		Process proc = rt.exec(args);
+
+		final Reader in = new InputStreamReader(proc.getInputStream());
+
+		final Reader err = new InputStreamReader(proc.getErrorStream());
+
+		Thread inThread = new Thread(
+			new Runnable() 
+			{	
+				@Override
+				public void run()
+				{
+					try
+					{
+						int c;
+						while ((c = in.read()) != -1) 
+						{
+						    result.append((char)c);
+						}
+					} catch (IOException ioe)
+					{
+						// TODO: log or handle the exception
+					}
+				}
+			}
+		);
+		inThread.start();
+
+		Thread errThread =  new Thread(
+			new Runnable() 
+			{	
+			    @Override
+				public void run() 
+				{
+			    	try 
+				    {
+						int c;
+						while ((c = err.read()) != -1) 
+						{
+							result.append((char)c);
+						}
+					} catch (IOException ioe)
+					{
+						// TODO: log or handle the exception
+					}
+				}
+			}
+		);
+		errThread.start();
 		
-		// TODO: More complex filtering/tracking in the future
-		if (isDueToAutomaticUpdate && (time - lastReportedErrroTime) < (45 * 1000))
-		{
-			return;
-		}
+		proc.waitFor();
+		inThread.join();
+		errThread.join();
 		
-		if (isDueToAutomaticUpdate)
-		{
-			lastReportedErrroTime = time;
-		}
-		
-		JOptionPane.showMessageDialog(
-			parent, 
-			"An unexpected error occurred when updating the GUI wallet\n" +
-			"state. Please ensure that the Zero daemon is running. \n" +
-			"\n" +
-			e.getMessage(),
-			"Error in updating status.", JOptionPane.ERROR_MESSAGE);
+		return result.toString();
 	}
 }

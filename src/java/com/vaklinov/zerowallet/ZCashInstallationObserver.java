@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 
 import java.io.File;
@@ -35,7 +35,7 @@ import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.util.StringTokenizer;
 
-import com.vaklinov.zcashui.OSUtil.OS_TYPE;
+import com.vaklinov.zerowallet.OSUtil.OS_TYPE;
 
 
 /**
@@ -60,8 +60,6 @@ public class ZCashInstallationObserver
 		UNABLE_TO_ASCERTAIN;
 	}
 
-	private String args[];
-
 	public ZCashInstallationObserver(String installDir)
 		throws IOException
 	{
@@ -71,7 +69,7 @@ public class ZCashInstallationObserver
 		if (!dir.exists() || dir.isFile())
 		{
 			throw new InstallationDetectionException(
-				"The Zero installation directory " + installDir + " does not exist or is not " +
+				"The Ƶero installation directory " + installDir + " does not exist or is not " +
 			    "a directory or is otherwise inaccessible to the wallet!");
 		}
 
@@ -84,16 +82,16 @@ public class ZCashInstallationObserver
 			zcashcli = OSUtil.findZCashCommand(OSUtil.getZCashCli());
 		}
 
-		System.out.println("Using Zero utilities: " +
+		Log.info("Using Ƶero utilities: " +
 		                   "zcashd: "    + ((zcashd != null) ? zcashd.getCanonicalPath() : "<MISSING>") + ", " +
 		                   "zcash-cli: " + ((zcashcli != null) ? zcashcli.getCanonicalPath() : "<MISSING>"));
 
 		if ((zcashd == null) || (zcashcli == null) || (!zcashd.exists()) || (!zcashcli.exists()))
 		{
 			throw new InstallationDetectionException(
-				"The Zero GUI Wallet installation directory " + installDir + " needs\nto contain " +
+				"The Ƶero GUI Wallet installation directory " + installDir + " needs\nto contain " +
 				"the command line utilities zcashd and zcash-cli. At least one of them is missing! \n" +
-				"Please place files ZEROSwingWalletUI.jar, " + OSUtil.getZCashCli() + ", " + 
+				"Please place files ZeroSwingWalletUI.jar, " + OSUtil.getZCashCli() + ", " + 
 				OSUtil.getZCashd() + " in the same directory.");
 		}
 	}
@@ -253,7 +251,7 @@ public class ZCashInstallationObserver
 				} catch (NumberFormatException nfe)
 				{
 					info.residentSizeMB = 0;
-					System.out.println("Error: could not find the numeric memory size of zcashd: " + size);
+					Log.error("Error: could not find the numeric memory size of zcashd: " + size);
 				};
 				
 				break;

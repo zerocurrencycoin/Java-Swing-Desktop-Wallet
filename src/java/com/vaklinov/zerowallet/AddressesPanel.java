@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 
 import java.awt.BorderLayout;
@@ -50,8 +50,8 @@ import javax.swing.JTable;
 import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
 
-import com.vaklinov.zcashui.OSUtil.OS_TYPE;
-import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.OSUtil.OS_TYPE;
+import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
 
 
 /**
@@ -62,6 +62,7 @@ import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
 public class AddressesPanel
 	extends WalletTabPanel
 {
+	private static final long serialVersionUID = 4067483983995952165L;
 	private ZCashClientCaller clientCaller;
 	private StatusUpdateErrorReporter errorReporter;
 
@@ -114,7 +115,7 @@ public class AddressesPanel
 		warningPanel.setLayout(new BorderLayout(3, 3));
 		warningPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		JLabel warningL = new JLabel(
-				"<html><span style=\"font-size:8px;\">" +
+				"<html><span style=\"font-size:0.8em;\">" +
 				"* If the balance of an address is flagged as not confirmed, the address is currently taking " +
 				"part in a transaction. The shown balance then is the expected value it will have when " +
 				"the transaction is confirmed. " +
@@ -133,7 +134,7 @@ public class AddressesPanel
 					long start = System.currentTimeMillis();
 					String[][] data = AddressesPanel.this.getAddressBalanceDataFromWallet();
 					long end = System.currentTimeMillis();
-					System.out.println("Gathering of address/balance table data done in " + (end - start) + "ms." );
+					Log.info("Gathering of address/balance table data done in " + (end - start) + "ms." );
 					
 				    return data;
 				}
@@ -151,7 +152,7 @@ public class AddressesPanel
 					AddressesPanel.this.updateWalletAddressBalanceTableAutomated();
 				} catch (Exception ex)
 				{
-					ex.printStackTrace();
+					Log.error("Unexpected error: ", ex);
 					AddressesPanel.this.errorReporter.reportError(ex);
 				}
 			}
@@ -182,7 +183,7 @@ public class AddressesPanel
 						AddressesPanel.this.setCursor(oldCursor);
 					}
 					
-					ex.printStackTrace();
+					Log.error("Unexpected error: ", ex);
 					AddressesPanel.this.errorReporter.reportError(ex, false);
 				}
 			}
@@ -259,7 +260,7 @@ public class AddressesPanel
 			this.updateWalletAddressBalanceTableInteractive();
 		} catch (Exception e)
 		{
-			e.printStackTrace();			
+			Log.error("Unexpected error: ", e);			
 			AddressesPanel.this.errorReporter.reportError(e, false);
 		}
 	}
@@ -274,7 +275,7 @@ public class AddressesPanel
 
 		if (Util.arraysAreDifferent(lastAddressBalanceData, newAddressBalanceData))
 		{
-			System.out.println("Updating table of addresses/balances I...");
+			Log.info("Updating table of addresses/balances I...");
 			this.remove(addressBalanceTablePane);
 			this.add(addressBalanceTablePane = new JScrollPane(
 			             addressBalanceTable = this.createAddressBalanceTable(newAddressBalanceData)),
@@ -302,7 +303,7 @@ public class AddressesPanel
 		if ((newAddressBalanceData != null) && 
 			Util.arraysAreDifferent(lastAddressBalanceData, newAddressBalanceData))
 		{
-			System.out.println("Updating table of addresses/balances A...");
+			Log.info("Updating table of addresses/balances A...");
 			this.remove(addressBalanceTablePane);
 			this.add(addressBalanceTablePane = new JScrollPane(
 			             addressBalanceTable = this.createAddressBalanceTable(newAddressBalanceData)),
