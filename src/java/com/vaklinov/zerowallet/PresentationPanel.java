@@ -26,94 +26,82 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.StringReader;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
 
-import com.eclipsesource.json.JsonObject;
+import javax.swing.JPanel;
+
 
 /**
- * Utilities - generally reusable across classes.
+ * Panel with gradient background etc. for pretty label presentations.
  *
  * @author Ivan Vaklinov <ivan@vaklinov.com>
  */
-public class Util
+public class PresentationPanel 
+	extends JPanel 
 {
-	// Compares two string arrays (two dimensional).
-	public static boolean arraysAreDifferent(String ar1[][], String ar2[][])
+	private static final long serialVersionUID = -4704205608447058254L;
+
+	static final int GRADIENT_EXTENT = 17;
+
+	static final Color  colorBorder = new Color(140, 145, 145);
+	static final Color  colorLow    = new Color(250, 250, 250);
+	static final Color  colorHigh   = new Color(225, 225, 230);
+	static final Stroke edgeStroke  = new BasicStroke(1);
+
+	
+	public PresentationPanel()
 	{
-		if (ar1 == null)
-		{
-			if (ar2 != null)
-			{
-				return true;
-			}
-		} else if (ar2 == null)
-		{
-			return true;
-		}
-		
-		if (ar1.length != ar2.length)
-		{
-			return true;
-		}
-		
-		for (int i = 0; i < ar1.length; i++)
-		{
-			if (ar1[i].length != ar2[i].length)
-			{
-				return true;
-			}
-			
-			for (int j = 0; j < ar1[i].length; j++)
-			{
-				String s1 = ar1[i][j];
-				String s2 = ar2[i][j];
-				
-				if (s1 == null)
-				{
-					if (s2 != null)
-					{
-						return true;
-					}
-				} else if (s2 == null)
-				{
-					return true;
-				} else
-				{
-					if (!s1.equals(s2))
-					{
-						return true;
-					}
-				}
-			}
-		}
-		
-		return false;
+		this.setLayout(new FlowLayout(FlowLayout.LEFT, 6, 6));
 	}
 	
-	
-	// Turns a 1.0.7+ error message to a an old JSOn style message
-	// info - new style error message
-	public static JsonObject getJsonErrorMessage(String info)
-	    throws IOException
+
+	public void paintComponent(Graphics graphics) 
 	{
-    	JsonObject jInfo = new JsonObject();
-    	
-    	// Error message here comes from ZCash 1.0.7+ and is like:
-    	//zcash-cli getinfo
-    	//error code: -28
-    	//error message:
-    	//Loading block index...
-    	LineNumberReader lnr = new LineNumberReader(new StringReader(info));
-    	int errCode =  Integer.parseInt(lnr.readLine().substring(11).trim());
-    	jInfo.set("code", errCode);
-    	lnr.readLine();
-    	jInfo.set("message", lnr.readLine().trim());
-    	
-    	return jInfo;
+		int h = getHeight();
+		int w =  getWidth();
+		
+		if (h < GRADIENT_EXTENT + 1) 
+		{
+			super.paintComponent(graphics);
+			return;
+		}
+		
+		float percentageOfGradient = (float) GRADIENT_EXTENT / h;
+		
+		if (percentageOfGradient > 0.49f)
+		{
+			percentageOfGradient = 0.49f;
+		}
+		
+		Graphics2D graphics2D = (Graphics2D) graphics;
+		
+		float fractions[] = new float[] 
+		{ 
+			0, percentageOfGradient, 1 - percentageOfGradient, 1f 
+		};
+		
+		Color colors[] = new Color[] 
+		{ 
+			colorLow, colorHigh, colorHigh, colorLow 
+		};
+		
+		LinearGradientPaint paint = new LinearGradientPaint(0, 0, 0, h - 1, fractions, colors);
+		
+		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		graphics2D.setPaint(paint);
+		graphics2D.fillRoundRect(0, 0, w - 1, h - 1, GRADIENT_EXTENT, GRADIENT_EXTENT);
+		graphics2D.setColor(colorBorder);
+		graphics2D.setStroke(edgeStroke);
+		graphics2D.drawRoundRect(0, 0, w - 1, h - 1, GRADIENT_EXTENT, GRADIENT_EXTENT);
 	}
-	
+
 }

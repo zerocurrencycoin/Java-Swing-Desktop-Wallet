@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 import java.awt.Cursor;
 import java.awt.Toolkit;
@@ -39,9 +39,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
 
 
 /**
@@ -51,7 +50,7 @@ import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
  */
 public class WalletOperations
 {	
-	private ZCashUI parent;
+	private ZeroWallet parent;
 	private JTabbedPane tabs;
 	private DashboardPanel dashboard;
 	private SendCashPanel  sendCash;
@@ -62,7 +61,7 @@ public class WalletOperations
 	private StatusUpdateErrorReporter errorReporter;
 
 
-	public WalletOperations(ZCashUI parent,
+	public WalletOperations(ZeroWallet parent,
 			                JTabbedPane tabs,
 			                DashboardPanel dashboard,
 			                AddressesPanel addresses,
@@ -124,7 +123,7 @@ public class WalletOperations
 			} catch (WalletCallException wce)
 			{
 				this.parent.setCursor(oldCursor);
-				wce.printStackTrace();
+				Log.error("Unexpected error: ", wce);
 				
 				JOptionPane.showMessageDialog(
 					this.parent, 
@@ -174,17 +173,18 @@ public class WalletOperations
 			File f = fileChooser.getSelectedFile();
 			
 			Cursor oldCursor = this.parent.getCursor();
+			String path = null;
 			try
 			{
 				this.parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 							
-				this.clientCaller.backupWallet(f.getName());
+				path = this.clientCaller.backupWallet(f.getName());
 				
 				this.parent.setCursor(oldCursor);
 			} catch (WalletCallException wce)
 			{
 				this.parent.setCursor(oldCursor);
-				wce.printStackTrace();
+				Log.error("Unexpected error: ", wce);
 				
 				JOptionPane.showMessageDialog(
 					this.parent, 
@@ -197,7 +197,8 @@ public class WalletOperations
 			JOptionPane.showMessageDialog(
 				this.parent, 
 				"The wallet has been backed up successfully to file: " + f.getName() + "\n" +
-				"in the backup directory provided to zcashd (-exportdir=<dir>).",
+				"in the backup directory provided to zcashd (-exportdir=<dir>).\nFull path is: " + 
+				path,
 				"Wallet is backed up...", JOptionPane.INFORMATION_MESSAGE);
 			
 		} catch (Exception e)
@@ -230,17 +231,18 @@ public class WalletOperations
 			File f = fileChooser.getSelectedFile();
 			
 			Cursor oldCursor = this.parent.getCursor();
+			String path = null;
 			try
 			{
 				this.parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 							
-				this.clientCaller.exportWallet(f.getName());
+				path = this.clientCaller.exportWallet(f.getName());
 				
 				this.parent.setCursor(oldCursor);
 			} catch (WalletCallException wce)
 			{
 				this.parent.setCursor(oldCursor);
-				wce.printStackTrace();
+				Log.error("Unexpected error: ", wce);
 				
 				JOptionPane.showMessageDialog(
 					this.parent, 
@@ -254,9 +256,10 @@ public class WalletOperations
 				this.parent, 
 				"The wallet private keys have been exported successfully to file:\n" + 
 				f.getName() + "\n" +
-				"in the backup directory provided to zcashd (-exportdir=<dir>).\n" +
+				"in the backup directory provided to zcashd (-exportdir=<dir>).\nFull path is: " + 
+				path + "\n" +
 				"You need to protect this file from unauthorized access. Anyone who\n" +
-				"has access to the private keys can spend the Zero balance!",
+				"has access to the private keys can spend the ZCash balance!",
 				"Wallet private key export...", JOptionPane.INFORMATION_MESSAGE);
 			
 		} catch (Exception e)
@@ -310,7 +313,7 @@ public class WalletOperations
 			} catch (WalletCallException wce)
 			{
 				this.parent.setCursor(oldCursor);
-				wce.printStackTrace();
+				Log.error("Unexpected error: ", wce);
 				
 				JOptionPane.showMessageDialog(
 					this.parent, 

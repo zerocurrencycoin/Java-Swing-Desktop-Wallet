@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 
 import java.io.File;
@@ -51,7 +51,7 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import com.eclipsesource.json.ParseException;
 import com.eclipsesource.json.WriterConfig;
-import com.vaklinov.zcashui.OSUtil.OS_TYPE;
+import com.vaklinov.zerowallet.OSUtil.OS_TYPE;
 
 
 /**
@@ -83,6 +83,8 @@ public class ZCashClientCaller
 	public static class WalletCallException
 		extends Exception
 	{
+		private static final long serialVersionUID = -4917825152457329406L;
+
 		public WalletCallException(String message)
 		{
 			super(message);
@@ -127,7 +129,7 @@ public class ZCashClientCaller
 		if (zcashd == null || (!zcashd.exists()))
 		{
 		    throw new IOException(
-		    	"The Zero command line utility " + zcashcli.getCanonicalPath() + 
+		    	"The Ƶero command line utility " + zcashcli.getCanonicalPath() + 
 		    	" was found, but zcashd was not found!");
 		}
 	}
@@ -156,7 +158,7 @@ public class ZCashClientCaller
 	            new String[] { zcashcli.getCanonicalPath(), "stop" });
 	    
 	    String result = stopper.execute();
-	    System.out.println("Stop command issued: " + result);
+	    Log.info("Stop command issued: " + result);
 	}
 	
 
@@ -181,7 +183,7 @@ public class ZCashClientCaller
 		        return Json.parse(info).asObject();
 		    } catch (ParseException pe)
 		    {
-		    	System.out.println("unexpected daemon info: " + info);
+		    	Log.error("unexpected daemon info: " + info);
 		        throw new IOException(pe);
 		    }
 	    } else if (info.trim().toLowerCase(Locale.ROOT).startsWith("error code:"))
@@ -194,7 +196,7 @@ public class ZCashClientCaller
 		        return Json.parse(info).asObject();
 		    } catch (ParseException pe)
 		    {
-		    	System.out.println("unexpected daemon info: " + info);
+		    	Log.info("unexpected daemon info: " + info);
 		        throw new IOException(pe);
 		    }
 	    }
@@ -234,7 +236,7 @@ public class ZCashClientCaller
 		}
 		
 	    JsonArray jsonTransactions = executeCommandAndGetJsonArray(
-	    	"listtransactions", wrapStringParameter(""), "100");
+	    	"listtransactions", wrapStringParameter(""), "200");
 	    String strTransactions[][] = new String[jsonTransactions.size()][];
 	    for (int i = 0; i < jsonTransactions.size(); i++)
 	    {
@@ -534,7 +536,7 @@ public class ZCashClientCaller
 		                                  amount + " | " + toManyArrayStr);
 		}
 
-		System.out.println("The following send command will be issued: " +
+		Log.info("The following send command will be issued: " +
                 sendCashParameters[0] + " " + sendCashParameters[1] + " " +
                 sendCashParameters[2] + " " + sendCashParameters[3] + " " +
                 sendCashParameters[4] + " " + sendCashParameters[5] + ".");
@@ -549,7 +551,7 @@ public class ZCashClientCaller
 		  	throw new WalletCallException("Error response from wallet: " + strResponse);
 		}
 
-		System.out.println("Sending cash with the following command: " +
+		Log.info("Sending cash with the following command: " +
                 sendCashParameters[0] + " " + sendCashParameters[1] + " " +
                 sendCashParameters[2] + " " + sendCashParameters[3] + " " +
                 sendCashParameters[4] + " " + sendCashParameters[5] + "." +
@@ -568,7 +570,7 @@ public class ZCashClientCaller
 
 		String status = jsonStatus.getString("status", "ERROR");
 
-		System.out.println("Operation " + opID + " status is " + response + ".");
+		Log.info("Operation " + opID + " status is " + response + ".");
 
 		if (status.equalsIgnoreCase("success") ||
 			status.equalsIgnoreCase("error") ||
@@ -594,7 +596,7 @@ public class ZCashClientCaller
 
 		String status = jsonStatus.getString("status", "ERROR");
 
-		System.out.println("Operation " + opID + " status is " + response + ".");
+		Log.info("Operation " + opID + " status is " + response + ".");
 
 		if (status.equalsIgnoreCase("success"))
 		{
@@ -741,35 +743,37 @@ public class ZCashClientCaller
 	{
 		String response = this.executeCommandAndGetSingleStringResponse(
 			"encryptwallet", wrapStringParameter(password));
-		System.out.println("Result of wallet encryption is: \n" + response);
+		Log.info("Result of wallet encryption is: \n" + response);
 		// If no exception - obviously successful
 	}
 	
 	
-	public synchronized void backupWallet(String fileName)
+	public synchronized String backupWallet(String fileName)
 		throws WalletCallException, IOException, InterruptedException
 	{
-		System.out.println("Backup up wallet to location: " + fileName);
+		Log.info("Backup up wallet to location: " + fileName);
 		String response = this.executeCommandAndGetSingleStringResponse(
 			"backupwallet", wrapStringParameter(fileName));
 		// If no exception - obviously successful		
+		return response;
 	}
 	
 	
-	public synchronized void exportWallet(String fileName)
+	public synchronized String exportWallet(String fileName)
 		throws WalletCallException, IOException, InterruptedException
 	{
-		System.out.println("Export wallet keys to location: " + fileName);
+		Log.info("Export wallet keys to location: " + fileName);
 		String response = this.executeCommandAndGetSingleStringResponse(
 			"z_exportwallet", wrapStringParameter(fileName));
 		// If no exception - obviously successful		
+		return response;
 	}
 	
 	
 	public synchronized void importWallet(String fileName)
 		throws WalletCallException, IOException, InterruptedException
 	{
-		System.out.println("Import wallet keys from location: " + fileName);
+		Log.info("Import wallet keys from location: " + fileName);
 		String response = this.executeCommandAndGetSingleStringResponse(
 			"z_importwallet", wrapStringParameter(fileName));
 		// If no exception - obviously successful		

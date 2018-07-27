@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 
 import java.awt.BorderLayout;
@@ -34,9 +34,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -45,7 +43,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -59,13 +56,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
 
-import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
 
 
 /**
@@ -76,10 +72,12 @@ import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
 public class SendCashPanel
 	extends WalletTabPanel
 {
+	private static final long serialVersionUID = -2620238091689254278L;
+	
 	private ZCashClientCaller clientCaller;
 	private StatusUpdateErrorReporter errorReporter;
 	
-	private JComboBox  balanceAddressCombo     = null;
+	private JComboBox<String>  balanceAddressCombo     = null;
 	private JPanel     comboBoxParentPanel     = null;
 	private String[][] lastAddressBalanceData  = null;
 	private String[]   comboBoxItems           = null;
@@ -120,7 +118,7 @@ public class SendCashPanel
 		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		tempPanel.add(new JLabel("Send cash from:       "));
 		tempPanel.add(new JLabel(
-			"<html><span style=\"font-size:8px;\">" +
+			"<html><span style=\"font-size:0.8em;\">" +
 			"* Only addresses with a confirmed balance are shown as sources for sending!" +
 		    "</span>  "));
 		sendCashPanel.add(tempPanel);
@@ -150,7 +148,7 @@ public class SendCashPanel
 		tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		tempPanel.add(new JLabel("Memo (optional):     "));
 		tempPanel.add(new JLabel(
-				"<html><span style=\"font-size:8px;\">" +
+				"<html><span style=\"font-size:0.8em;\">" +
 				"* Memo may be specified only if the destination is a Z (Private) address!" +
 			    "</span>  "));
 		sendCashPanel.add(tempPanel);
@@ -171,7 +169,7 @@ public class SendCashPanel
 		tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		tempPanel.add(destinationAmountField = new JTextField(13));
 		destinationAmountField.setHorizontalAlignment(SwingConstants.RIGHT);
-		tempPanel.add(new JLabel(" ZER    "));
+		tempPanel.add(new JLabel(" ƵER    "));
 		amountPanel.add(tempPanel, BorderLayout.SOUTH);
 
 		JPanel feePanel = new JPanel(new BorderLayout());
@@ -180,7 +178,7 @@ public class SendCashPanel
 		tempPanel.add(transactionFeeField = new JTextField(13));
 		transactionFeeField.setText("0.0001"); // Default value
 		transactionFeeField.setHorizontalAlignment(SwingConstants.RIGHT);		
-		tempPanel.add(new JLabel(" ZER"));
+		tempPanel.add(new JLabel(" ƵER"));
 		feePanel.add(tempPanel, BorderLayout.SOUTH);
 
 		amountAndFeePanel.add(amountPanel);
@@ -202,7 +200,7 @@ public class SendCashPanel
 		JPanel warningPanel = new JPanel();
 		warningPanel.setLayout(new BorderLayout(7, 3));
 		JLabel warningL = new JLabel(
-				"<html><span style=\"font-size:8px;\">" +
+				"<html><span style=\"font-size:0.8em;\">" +
 				" * When sending cash from a T (Transparent) address, the remining unspent balance is sent to another " +
 				"auto-generated T address. When sending from a Z (Private) address, the remining unspent balance remains with " +
 				"the Z address. In both cases the original sending address cannot be used for sending again until the " +
@@ -250,7 +248,7 @@ public class SendCashPanel
 					SendCashPanel.this.sendCash();
 				} catch (Exception ex)
 				{
-					ex.printStackTrace();
+					Log.error("Unexpected error: ", ex);
 					
 					String errMessage = "";
 					if (ex instanceof WalletCallException)
@@ -261,7 +259,7 @@ public class SendCashPanel
 					JOptionPane.showMessageDialog(
 							SendCashPanel.this.getRootPane().getParent(), 
 							"An unexpected error occurred when sending cash!\n" + 
-							"Please ensure that the Zero daemon is running and\n" +
+							"Please ensure that the Ƶero daemon is running and\n" +
 							"parameters are correct. You may try again later...\n" +
 							errMessage, 
 							"Error in sending cash", JOptionPane.ERROR_MESSAGE);
@@ -279,7 +277,7 @@ public class SendCashPanel
 					long start = System.currentTimeMillis();
 					String[][] data = SendCashPanel.this.getAddressPositiveBalanceDataFromWallet();
 					long end = System.currentTimeMillis();
-					System.out.println("Gathering of address/balance table data done in " + (end - start) + "ms." );
+					Log.info("Gathering of address/balance table data done in " + (end - start) + "ms." );
 					
 					return data;
 				}
@@ -298,7 +296,7 @@ public class SendCashPanel
 					SendCashPanel.this.updateWalletAddressPositiveBalanceComboBox();
 				} catch (Exception ex)
 				{
-					ex.printStackTrace();
+					Log.error("Unexpected error: ", ex);
 					SendCashPanel.this.errorReporter.reportError(ex);
 				}
 			}
@@ -327,7 +325,7 @@ public class SendCashPanel
 					}
 				} catch (Exception ex)
 				{
-					ex.printStackTrace();
+					Log.error("Unexpected error", ex);
 					// TODO: clipboard exception handling - do it better
 					// java.awt.datatransfer.UnsupportedFlavorException: Unicode String
 					//SendCashPanel.this.errorReporter.reportError(ex);
@@ -358,6 +356,7 @@ public class SendCashPanel
 	}
 	
 	
+	@SuppressWarnings("unused")
 	private void sendCash()
 		throws WalletCallException, IOException, InterruptedException
 	{
@@ -473,24 +472,48 @@ public class SendCashPanel
 		destinationMemoField.setEnabled(false);
 		transactionFeeField.setEnabled(false);
 		
+		// Start a data gathering thread specific to the operation being executed - this is done is a separate 
+		// thread since the server responds more slowly during JoinSPlits and this blocks he GUI somewhat.
+		final DataGatheringThread<Boolean> opFollowingThread = new DataGatheringThread<Boolean>(
+			new DataGatheringThread.DataGatherer<Boolean>() 
+			{
+				public Boolean gatherData()
+					throws Exception
+				{
+					long start = System.currentTimeMillis();
+					Boolean result = clientCaller.isSendingOperationComplete(operationStatusID);
+					long end = System.currentTimeMillis();
+					Log.info("Checking for operation " + operationStatusID + " status done in " + (end - start) + "ms." );
+					
+					return result;
+				}
+			}, 
+			this.errorReporter, 2000, true);
+		
 		// Start a timer to update the progress of the operation
 		operationStatusCounter = 0;
-		operationStatusTimer = new Timer(2000, new ActionListener() {
+		operationStatusTimer = new Timer(2000, new ActionListener() 
+		{
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
 				try
 				{
 					// TODO: Handle errors in case of restarted server while wallet is sending ...
-					if (clientCaller.isSendingOperationComplete(operationStatusID))
+					Boolean opComplete = opFollowingThread.getLastData();
+					
+					if ((opComplete != null) && opComplete.booleanValue())
 					{
+						// End the special thread used to follow the operation
+						opFollowingThread.setSuspended(true);
+						
 						if (clientCaller.isCompletedOperationSuccessful(operationStatusID))
 						{
 							operationStatusLabel.setText(
 								"<html><span style=\"color:green;font-weight:bold\">SUCCESSFUL</span></html>");
 							JOptionPane.showMessageDialog(
 									SendCashPanel.this.getRootPane().getParent(), 
-									"Succesfully sent " + amount + " ZER from address: \n" +
+									"Succesfully sent " + amount + " ƵER from address: \n" +
 									sourceAddress + "\n" +
 									"to address: \n" +
 									destinationAddress + "\n", 
@@ -549,7 +572,7 @@ public class SendCashPanel
 					SendCashPanel.this.repaint();
 				} catch (Exception ex)
 				{
-					ex.printStackTrace();
+					Log.error("Unexpected error: ", ex);
 					SendCashPanel.this.errorReporter.reportError(ex);
 				}
 			}

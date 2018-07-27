@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 
 import java.awt.BorderLayout;
@@ -36,12 +36,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -50,14 +51,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
-import com.vaklinov.zcashui.OSUtil.OS_TYPE;
-import com.vaklinov.zcashui.ZCashClientCaller.NetworkAndBlockchainInfo;
-import com.vaklinov.zcashui.ZCashClientCaller.WalletBalance;
-import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
-import com.vaklinov.zcashui.ZCashInstallationObserver.DAEMON_STATUS;
-import com.vaklinov.zcashui.ZCashInstallationObserver.DaemonInfo;
+import com.vaklinov.zerowallet.OSUtil.OS_TYPE;
+import com.vaklinov.zerowallet.ZCashClientCaller.NetworkAndBlockchainInfo;
+import com.vaklinov.zerowallet.ZCashClientCaller.WalletBalance;
+import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZCashInstallationObserver.DAEMON_STATUS;
+import com.vaklinov.zerowallet.ZCashInstallationObserver.DaemonInfo;
 
 
 /**
@@ -68,6 +70,8 @@ import com.vaklinov.zcashui.ZCashInstallationObserver.DaemonInfo;
 public class DashboardPanel
 	extends WalletTabPanel
 {
+	private static final long serialVersionUID = -1507226996689759920L;
+	
 	private JFrame parentFrame;
 	private ZCashInstallationObserver installationObserver;
 	private ZCashClientCaller clientCaller;
@@ -86,6 +90,7 @@ public class DashboardPanel
 	private JLabel walletBalanceLabel  = null;
 	private DataGatheringThread<WalletBalance> walletBalanceGatheringThread = null;
 	
+	@SuppressWarnings("unused")
 	private JTable transactionsTable   = null;
 	private JScrollPane transactionsTablePane  = null;
 	private String[][] lastTransactionsData = null;
@@ -117,21 +122,25 @@ public class DashboardPanel
 		balanceStatusPanel.setLayout(new BorderLayout(3, 3)); 
 		//balanceStatusPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		
-		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 9));
-		//JLabel logoLabel = new JLabel(new ImageIcon(
-		//	this.getClass().getClassLoader().getResource("images/zcash-logo-square3.png")));
-		//tempPanel.add(logoLabel);
-		//tempPanel.add(new JLabel(" "));
-		JLabel zcLabel = new JLabel("\u01B5ERO Wallet        ");
-		zcLabel.setFont(new Font("Helvetica", Font.BOLD | Font.ITALIC, 32));
-		tempPanel.add(zcLabel);
-		//tempPanel.setToolTipText("Powered by ZCash\u00AE");
+		JPanel tempPanel = new JPanel();
+		JLabel logoLabel = new JLabel(new ImageIcon(
+			this.getClass().getClassLoader().getResource("images/zero-logo-black-yellow-small.png")));
+		JLabel zcLabel = new JLabel("Ƶero Currency Wallet");
+		zcLabel.setIconTextGap(8);
+		zcLabel.setFont(new Font("Helvetica", Font.BOLD, 32));
+		tempPanel.setToolTipText("Powered by Ƶero");
 		balanceStatusPanel.add(tempPanel, BorderLayout.WEST);
+		tempPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		tempPanel.add(logoLabel);
+		tempPanel.add(zcLabel);
 				
 		JLabel transactionHeadingLabel = new JLabel(
-			"<html><span style=\"font-size:23px\"><br/></span>Transactions:</html>");
+			"<html><span style=\"font-size:2em\"><br/></span>Transactions:</html>");
+		transactionHeadingLabel.setVerticalAlignment(SwingConstants.TOP);
+		tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 1, 1));
 		transactionHeadingLabel.setFont(new Font("Helvetica", Font.BOLD, 19));
-		balanceStatusPanel.add(transactionHeadingLabel, BorderLayout.CENTER);
+		tempPanel.add(transactionHeadingLabel);
+		balanceStatusPanel.add(tempPanel, BorderLayout.CENTER);
 						
 		PresentationPanel walletBalancePanel = new PresentationPanel();
 		walletBalancePanel.add(walletBalanceLabel = new JLabel());
@@ -169,7 +178,7 @@ public class DashboardPanel
 					long start = System.currentTimeMillis();
 					DaemonInfo daemonInfo = DashboardPanel.this.installationObserver.getDaemonInfo();
 					long end = System.currentTimeMillis();
-					System.out.println("Gathering of dashboard daemon status data done in " + (end - start) + "ms." );
+					Log.info("Gathering of dashboard daemon status data done in " + (end - start) + "ms." );
 					
 					return daemonInfo;
 				}
@@ -186,7 +195,7 @@ public class DashboardPanel
 					DashboardPanel.this.updateDaemonStatusLabel();
 				} catch (Exception ex)
 				{
-					ex.printStackTrace();
+					Log.error("Unexpected error: ", ex);
 					DashboardPanel.this.errorReporter.reportError(ex);
 				}
 			}
@@ -213,7 +222,7 @@ public class DashboardPanel
 					    DashboardPanel.this.walletIsEncrypted = DashboardPanel.this.clientCaller.isWalletEncrypted();
 					}
 					
-					System.out.println("Gathering of dashboard wallet balance data done in " + (end - start) + "ms." );
+					Log.info("Gathering of dashboard wallet balance data done in " + (end - start) + "ms." );
 					
 					return balance;
 				}
@@ -230,7 +239,7 @@ public class DashboardPanel
 					DashboardPanel.this.updateWalletStatusLabel();
 				} catch (Exception ex)
 				{
-					ex.printStackTrace();
+					Log.error("Unexpected error: ", ex);
 					DashboardPanel.this.errorReporter.reportError(ex);
 				}
 			}
@@ -250,12 +259,12 @@ public class DashboardPanel
 					long start = System.currentTimeMillis();
 					String[][] data =  DashboardPanel.this.getTransactionsDataFromWallet();
 					long end = System.currentTimeMillis();
-					System.out.println("Gathering of dashboard wallet transactions table data done in " + (end - start) + "ms." );
+					Log.info("Gathering of dashboard wallet transactions table data done in " + (end - start) + "ms." );
 					
 					return data;
 				}
 			}, 
-			this.errorReporter, 25000);
+			this.errorReporter, 20000);
 		this.threads.add(this.transactionGatheringThread);
 		
 		ActionListener alTransactions = new ActionListener() {
@@ -267,7 +276,7 @@ public class DashboardPanel
 					DashboardPanel.this.updateWalletTransactionsTable();
 				} catch (Exception ex)
 				{
-					ex.printStackTrace();
+					Log.error("Unexpected error: ", ex);
 					DashboardPanel.this.errorReporter.reportError(ex);
 				}
 			}
@@ -286,7 +295,7 @@ public class DashboardPanel
 					long start = System.currentTimeMillis();
 					NetworkAndBlockchainInfo data =  DashboardPanel.this.clientCaller.getNetworkAndBlockchainInfo();
 					long end = System.currentTimeMillis();
-					System.out.println("Gathering of network and blockchain info data done in " + (end - start) + "ms." );
+					Log.info("Gathering of network and blockchain info data done in " + (end - start) + "ms." );
 					
 					return data;
 				}
@@ -303,7 +312,7 @@ public class DashboardPanel
 					DashboardPanel.this.updateNetworkAndBlockchainLabel();
 				} catch (Exception ex)
 				{
-					ex.printStackTrace();
+					Log.error("Unexpected error: ", ex);
 					DashboardPanel.this.errorReporter.reportError(ex);
 				}
 			}
@@ -356,13 +365,13 @@ public class DashboardPanel
 		
 		if (daemonInfo.status == DAEMON_STATUS.RUNNING)
 		{
-			runtimeInfo = "<span style=\"font-size:8px\">" +
+			runtimeInfo = "<span style=\"font-size:0.8em\">" +
 					      "Resident: " + daemonInfo.residentSizeMB + " MB" + virtual +
 					       cpuPercentage + "</span>";
 		}
 
-		// TODO: what if ZCash directory is non-default...
-		File walletDAT = new File(OSUtil.getBlockchainDirectory() + "/wallet.zero");
+		// TODO: what if Ƶero directory is non-default...
+		File walletDAT = new File(OSUtil.getBlockchainDirectory() + "/wallet.dat");
 		
 		if (this.OSInfo == null)
 		{
@@ -374,7 +383,7 @@ public class DashboardPanel
 		if (this.walletIsEncrypted != null)
 		{
 			walletEncryption = 
-					"<span style=\"font-size:8px\">" + 
+					"<span style=\"font-size:0.8em\">" + 
 			        " (" + (this.walletIsEncrypted ? "" : "not ") + "encrypted)" +
 			        "</span>";
 		}
@@ -385,7 +394,7 @@ public class DashboardPanel
 			"Wallet: <span style=\"font-weight:bold;color:#303030\">" + walletDAT.getCanonicalPath() + "</span>" + 
 			walletEncryption + " <br/> " +
 			"<span style=\"font-size:3px\"><br/></span>" +
-			"<span style=\"font-size:8px\">" +
+			"<span style=\"font-size:0.8em\">" +
 			"Installation: " + OSUtil.getProgramDirectory() + ", " +
 	        "Blockchain: " + OSUtil.getBlockchainDirectory() + " <br/> " +
 		    "System: " + this.OSInfo + " </span> </html>";
@@ -404,8 +413,10 @@ public class DashboardPanel
 			return;
 		}
 		
-		// TODO: Get the start date right after ZCash release - from first block!!!
-		final Date startDate = new Date("20 Feb 2017 02:00:00 GMT");
+		// TODO: Get the start date right after Ƶero release - from first block!!!
+		Calendar cal = Calendar.getInstance();
+		cal.set(2017, Calendar.FEBRUARY, 20, 2, 0, 0);
+		final Date startDate = new Date(cal.getTimeInMillis());
 		final Date nowDate = new Date(System.currentTimeMillis());
 		
 		long fullTime = nowDate.getTime() - startDate.getTime();
@@ -454,7 +465,7 @@ public class DashboardPanel
 		String tick = "";
 		if (percentage.equals("100"))
 		{
-			tick = "<span style=\"font-weight:bold;font-size:12px;color:green\">" + tickSymbol + "</span>";
+			tick = "<span style=\"font-weight:bold;font-size:1.4em;color:green\">" + tickSymbol + "</span>";
 		}
 		
 		String netColor = "red";
@@ -477,11 +488,11 @@ public class DashboardPanel
 			"<html> " +
 		    "Blockchain synchronized: <span style=\"font-weight:bold\">" + 
 			percentage + "% </span> " + tick + " <br/>" +
-			"Up to: <span style=\"font-size:8px;font-weight:bold\">" + 
-		    info.lastBlockDate.toLocaleString() + "</span>  <br/> " + 
+			"Up to: <span style=\"font-size:0.8em;font-weight:bold\">" +
+			DateFormat.getDateInstance().format(info.lastBlockDate) + "</span>  <br/> " + 
 			"<span style=\"font-size:1px\"><br/></span>" + 
 			"Network: <span style=\"font-weight:bold\">" + info.numConnections + " connections</span>" +
-			"<span style=\"font-size:16px;color:" + netColor + "\">" + connections + "</span>";
+			"<span style=\"font-size:1.7em;color:" + netColor + "\">" + connections + "</span>";
 		this.networkAndBlockchainLabel.setText(text);
 	}
 	
@@ -497,7 +508,7 @@ public class DashboardPanel
 			return;
 		}
 		
-		// Format double numbers - else sometimes we get exponential notation 1E-4 ZEC
+		// Format double numbers - else sometimes we get exponential notation 1E-4 ƵER
 		DecimalFormat df = new DecimalFormat("########0.00######");
 		
 		String transparentBalance = df.format(balance.transparentBalance);
@@ -514,12 +525,12 @@ public class DashboardPanel
 		
 		String text =
 			"<html>" + 
-		    "<span style=\"font-family:monospace;font-size:8.9px;" + color1 + "\">Transparent balance: <span style=\"font-size:9px\">" + 
-				transparentUCBalance + " ZER </span></span><br/> " +
-			"<span style=\"font-family:monospace;font-size:8.9px;" + color2 + "\">Private (Z) balance: <span style=\"font-weight:bold;font-size:9px\">" + 
-		    	privateUCBalance + " ZER </span></span><br/> " +
-			"<span style=\"font-family:monospace;font-size:8.9px;" + color3 + "\">Total (Z+T) balance: <span style=\"font-weight:bold;font-size:11.5px;\">" + 
-		    	totalUCBalance + " ZER </span></span>" +
+		    "<span style=\"font-family:monospace;font-size:1em;" + color1 + "\">Transparent balance: <span style=\"font-size:1.1em;\">" + 
+				transparentUCBalance + " ƵER </span></span><br/> " +
+			"<span style=\"font-family:monospace;font-size:1em;" + color2 + "\">Private (Z) balance: <span style=\"font-weight:bold;font-size:1.1em;\">" + 
+		    	privateUCBalance + " ƵER </span></span><br/> " +
+			"<span style=\"font-family:monospace;font-size:1em;" + color3 + "\">Total (Z+T) balance: <span style=\"font-weight:bold;font-size:1.35em;\">" + 
+		    	totalUCBalance + " ƵER </span></span>" +
 			"<br/>  </html>";
 		
 		this.walletBalanceLabel.setText(text);
@@ -533,9 +544,9 @@ public class DashboardPanel
 					  "Unconfirmed (unspendable) balance is being shown due to an<br/>" + 
 		              "ongoing transaction! Actual confirmed (spendable) balance is:<br/>" +
 		              "<span style=\"font-size:5px\"><br/></span>" +
-					  "Transparent: " + transparentBalance + " ZER<br/>" +
-		              "Private ( Z ): <span style=\"font-weight:bold\">" + privateBalance + " ZER</span><br/>" +
-					  "Total ( Z+T ): <span style=\"font-weight:bold\">" + totalBalance + " ZER</span>" +
+					  "Transparent: " + transparentBalance + " ƵER<br/>" +
+		              "Private ( Z ): <span style=\"font-weight:bold\">" + privateBalance + " ƵER</span><br/>" +
+					  "Total ( Z+T ): <span style=\"font-weight:bold\">" + totalBalance + " ƵER</span>" +
 					  "</html>";
 		}
 		
@@ -556,7 +567,7 @@ public class DashboardPanel
 			
 		if (Util.arraysAreDifferent(lastTransactionsData, newTransactionsData))
 		{
-			System.out.println("Updating table of transactions...");
+			Log.info("Updating table of transactions...");
 			this.remove(transactionsTablePane);
 			this.add(transactionsTablePane = new JScrollPane(
 			             transactionsTable = this.createTransactionsTable(newTransactionsData)),
@@ -672,7 +683,7 @@ public class DashboardPanel
 			// Date
 			if (!trans[4].equals("N/A"))
 			{
-				trans[4] = new Date(Long.valueOf(trans[4]).longValue() * 1000L).toLocaleString();
+				trans[4] = DateFormat.getDateInstance().format(new Date(Long.valueOf(trans[4]).longValue() * 1000L));
 			}
 			
 			// Amount
@@ -686,7 +697,7 @@ public class DashboardPanel
 				trans[3] = df.format(amount);
 			} catch (NumberFormatException nfe)
 			{
-				System.out.println("Error occurred while formatting amount: " + trans[3] + 
+				Log.error("Error occurred while formatting amount: " + trans[3] + 
 						           " - " + nfe.getMessage() + "!");
 			}
 			
@@ -698,7 +709,7 @@ public class DashboardPanel
 				trans[2] = isConfirmed ? ("Yes " + confirmed) : ("No  " + notConfirmed);
 			} catch (NumberFormatException nfe)
 			{
-				System.out.println("Error occurred while formatting confirmations: " + trans[2] + 
+				Log.error("Error occurred while formatting confirmations: " + trans[2] + 
 						           " - " + nfe.getMessage() + "!");
 			}
 		}
