@@ -1,10 +1,10 @@
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 import java.io.*;
 import java.nio.file.*;
 import javax.swing.*;
 import com.eclipsesource.json.*;
-import com.vaklinov.zcashui.OSUtil.OS_TYPE;
+import com.vaklinov.zerowallet.OSUtil.OS_TYPE;
 
 /**
  * Preferences reading and writing
@@ -40,9 +40,9 @@ public class WalletPreferences {
 			e2.printStackTrace();
 			System.exit(3);
 		}
-		System.out.println("Preferences file in " + preferencesFileDir + " directory");
+		Log.info("Preferences file in " + preferencesFileDir + " directory");
 		preferencesFile = new File(preferencesFileDir, "ZeroSwingWalletUI.prefs");
-		System.out.println("Will read the preferences");
+		Log.info("Will read the preferences");
 		Reader preferencesReader = null;
 		try {
 			preferencesReader = new FileReader(preferencesFile);
@@ -86,12 +86,12 @@ public class WalletPreferences {
 		if (os == OS_TYPE.LINUX || os == OS_TYPE.MAC_OS)
 			defaultCommandLineToolsDir = commandLineToolsDirDefault;
 		else
-			defaultCommandLineToolsDir = System.getenv("APPDATA") + "\\Zero";
+			defaultCommandLineToolsDir = System.getenv("APPDATA") + "\\ZCash";
 
 		if (!Files.isDirectory(Paths.get(defaultCommandLineToolsDir))) {
-			System.out.println("Will ask for the directory where the command line tools are");
+			Log.info("Will ask for the directory where the command line tools are");
 			JOptionPane.showMessageDialog(new JFrame(),
-					"Please select the directory where the command line utils are installed:\n\nzcashd, zcash-cli and zcash-tx",
+					"Please select the directory where the command line utils are installed:\nzcashd, zcash-cli and zcash-tx",
 					"Directory selection",
 			        JOptionPane.INFORMATION_MESSAGE);
 			JFileChooser dirChooser = new JFileChooser();
@@ -113,13 +113,10 @@ public class WalletPreferences {
 			preferences.add("commandLineToolsDir", defaultCommandLineToolsDir);
 		}
 		
-		System.out.println("Preferences");
-		System.out.print("mainnetRPCPort : ");
-		System.out.println(mainnetRPCPort);
-		System.out.print("testnetRPCPort : ");
-		System.out.println(testnetRPCPort);
-		System.out.print("commandLineToolsDir : ");
-		System.out.println(commandLineToolsDir);
+		Log.info("Preferences");
+		Log.info("mainnetRPCPort : " + Integer.toString(mainnetRPCPort));
+		Log.info("testnetRPCPort : " + Integer.toString(mainnetRPCPort));
+		Log.info("commandLineToolsDir : " + commandLineToolsDir);
 	}
 	
 	public Integer mainnetRPCPort() {
@@ -171,13 +168,10 @@ public class WalletPreferences {
 		Writer preferencesWriter = null;
 		if (mustSave) {
 			try {
-				System.out.println("Will write the preferences");
-				System.out.print("mainnetRPCPort : ");
-				System.out.println(mainnetRPCPort);
-				System.out.print("testnetRPCPort : ");
-				System.out.println(testnetRPCPort);
-				System.out.print("commandLineToolsDir : ");
-				System.out.println(commandLineToolsDir);
+				Log.info("Will write the preferences");
+				Log.info("mainnetRPCPort : " + Integer.toString(mainnetRPCPort));
+				Log.info("testnetRPCPort : " + Integer.toString(testnetRPCPort));
+				Log.info("commandLineToolsDir : " + commandLineToolsDir);
 				preferences.set("mainnetRPCPort", mainnetRPCPort);
 				preferences.set("testnetRPCPort", testnetRPCPort);
 				preferences.set("commandLineToolsDir", commandLineToolsDir);

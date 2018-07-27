@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 
 import java.awt.Container;
@@ -55,26 +55,26 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.plaf.FontUIResource;
 
-import com.vaklinov.zcashui.OSUtil.OS_TYPE;
-import com.vaklinov.zcashui.ZCashClientCaller.NetworkAndBlockchainInfo;
-import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
-import com.vaklinov.zcashui.ZCashInstallationObserver.DAEMON_STATUS;
-import com.vaklinov.zcashui.ZCashInstallationObserver.DaemonInfo;
-import com.vaklinov.zcashui.ZCashInstallationObserver.InstallationDetectionException;
-import javax.swing.JPanel;
+import com.vaklinov.zerowallet.OSUtil.OS_TYPE;
+import com.vaklinov.zerowallet.ZCashClientCaller.NetworkAndBlockchainInfo;
+import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZCashInstallationObserver.DAEMON_STATUS;
+import com.vaklinov.zerowallet.ZCashInstallationObserver.DaemonInfo;
+import com.vaklinov.zerowallet.ZCashInstallationObserver.InstallationDetectionException;
 
 
 /**
- * Main ZCash Window.
+ * Main Ƶero Window.
  *
  * @author Ivan Vaklinov <ivan@vaklinov.com>
  */
-public class ZCashUI
+public class ZeroWallet
     extends JFrame
 {
-    private ZCashInstallationObserver installationObserver;
+	private static final long serialVersionUID = -8056343020670619627L;
+
+	private ZCashInstallationObserver installationObserver;
     private ZCashClientCaller         clientCaller;
     private StatusUpdateErrorReporter errorReporter;
 
@@ -92,17 +92,15 @@ public class ZCashUI
     private DashboardPanel   dashboard;
     private AddressesPanel   addresses;
     private SendCashPanel    sendPanel;
-    private AddressBookPanel addressBookPanel;
-    private PreferencesPanel preferencesPanel;
     
     private static WalletPreferences preferences;
     
     JTabbedPane tabs;
 
-    public ZCashUI(StartupProgressDialog progressDialog)
+    public ZeroWallet(StartupProgressDialog progressDialog)
         throws IOException, InterruptedException, WalletCallException
     {
-        super("\u01B5ERO Swing Wallet UI 0.68 (beta)");
+        super("Ƶero Swing Wallet - 0.74 (beta)");
         
         if (progressDialog != null)
         {
@@ -111,7 +109,7 @@ public class ZCashUI
         
         ClassLoader cl = this.getClass().getClassLoader();
 
-        this.setIconImage(new ImageIcon(cl.getResource("images/zero-logo-black-yellow2.png")).getImage());
+        this.setIconImage(new ImageIcon(cl.getResource("images/zero-logo-black-yellow.png")).getImage());
 
         Container contentPane = this.getContentPane();
 
@@ -121,9 +119,7 @@ public class ZCashUI
 
         // Build content
         tabs = new JTabbedPane();
-        Font oldTabFont = tabs.getFont();
-        Font newTabFont  = new Font(oldTabFont.getName(), Font.BOLD | Font.ITALIC, oldTabFont.getSize() * 57 / 50);
-        tabs.setFont(newTabFont);
+        tabs.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
         tabs.addTab("Overview ",
         		    new ImageIcon(cl.getResource("images/overview.png")),
         		    dashboard = new DashboardPanel(this, installationObserver, clientCaller, errorReporter));
@@ -135,16 +131,16 @@ public class ZCashUI
         		    sendPanel = new SendCashPanel(clientCaller, errorReporter));
         tabs.addTab("Address book ",
     		        new ImageIcon(cl.getResource("images/address-book.png")),
-    		        addressBookPanel = new AddressBookPanel(sendPanel, tabs));
+    		        new AddressBookPanel(sendPanel, tabs));
         tabs.addTab("Preferences",
-		        	new ImageIcon(cl.getResource("images/preferences.png")),
-	    			preferencesPanel = new PreferencesPanel(preferences));
+	        		new ImageIcon(cl.getResource("images/preferences.png")),
+    				new PreferencesPanel(preferences));
         contentPane.add(tabs);
 
         this.walletOps = new WalletOperations(
             	this, tabs, dashboard, addresses, sendPanel, installationObserver, clientCaller, errorReporter);
-        
-        this.setSize(new Dimension(900, 427));
+
+        this.setSize(new Dimension(920, 427));
 
         // Build menu
         JMenuBar mb = new JMenuBar();
@@ -193,7 +189,7 @@ public class ZCashUI
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    ZCashUI.this.exitProgram();
+                    ZeroWallet.this.exitProgram();
                 }
             }
         );
@@ -206,12 +202,12 @@ public class ZCashUI
                 {
                 	try
                 	{
-                		AboutDialog ad = new AboutDialog(ZCashUI.this);
+                		AboutDialog ad = new AboutDialog(ZeroWallet.this);
                 		ad.setVisible(true);
                 	} catch (UnsupportedEncodingException uee)
                 	{
-                		uee.printStackTrace();
-                		ZCashUI.this.errorReporter.reportError(uee);
+                		Log.error("Unexpected error: ", uee);
+                		ZeroWallet.this.errorReporter.reportError(uee);
                 	}
                 }
             }
@@ -223,7 +219,7 @@ public class ZCashUI
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    ZCashUI.this.walletOps.backupWallet();
+                    ZeroWallet.this.walletOps.backupWallet();
                 }
             }
         );
@@ -234,7 +230,7 @@ public class ZCashUI
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    ZCashUI.this.walletOps.encryptWallet();
+                    ZeroWallet.this.walletOps.encryptWallet();
                 }
             }
         );
@@ -245,7 +241,7 @@ public class ZCashUI
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    ZCashUI.this.walletOps.exportWalletPrivateKeys();
+                    ZeroWallet.this.walletOps.exportWalletPrivateKeys();
                 }
             }
        );
@@ -256,7 +252,7 @@ public class ZCashUI
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    ZCashUI.this.walletOps.importWalletPrivateKeys();
+                    ZeroWallet.this.walletOps.importWalletPrivateKeys();
                 }
             }
        );
@@ -267,7 +263,7 @@ public class ZCashUI
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    ZCashUI.this.walletOps.showPrivateKey();
+                    ZeroWallet.this.walletOps.showPrivateKey();
                 }
             }
        );
@@ -278,7 +274,7 @@ public class ZCashUI
                @Override
                public void actionPerformed(ActionEvent e)
                {
-                   ZCashUI.this.walletOps.importSinglePrivateKey();
+                   ZeroWallet.this.walletOps.importSinglePrivateKey();
                }
            }
        );
@@ -290,7 +286,7 @@ public class ZCashUI
             @Override
             public void windowClosing(WindowEvent e)
             {
-                ZCashUI.this.exitProgram();
+                ZeroWallet.this.exitProgram();
             }
         });
 
@@ -314,14 +310,14 @@ public class ZCashUI
                 } catch (IOException ioe)
                 {
                     /* TODO: report exceptions to the user */
-                    ioe.printStackTrace();
+                	Log.error("Unexpected error: ", ioe);
                 }
 
                 JOptionPane.showMessageDialog(
-                    ZCashUI.this.getRootPane().getParent(),
-                    "The ZERO GUI Wallet is currently considered experimental. Use of this software\n" +
+                    ZeroWallet.this.getRootPane().getParent(),
+                    "The Ƶero GUI Wallet is currently considered experimental. Use of this software\n" +
                     "comes at your own risk! Be sure to read the list of known issues and limitations\n" +
-                    "at this page: https://github.com/vaklinov/zero-swing-wallet-ui\n\n" +
+                    "at this page: https://github.com/vaklinov/zcash-swing-wallet-ui\n\n" +
                     "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n" +
                     "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n" +
                     "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n" +
@@ -343,7 +339,7 @@ public class ZCashUI
 
     public void exitProgram()
     {
-        System.out.println("Exiting ...");
+    	Log.info("Exiting ...");
 
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         
@@ -360,10 +356,9 @@ public class ZCashUI
 //	        this.sendPanel.waitForEndOfThreads(3000);
 //        }
         
-        ZCashUI.this.setVisible(false);
-        ZCashUI.this.dispose();
+        ZeroWallet.this.setVisible(false);
+        ZeroWallet.this.dispose();
 
-        preferences.savePreferences();
         System.exit(0);
     }
 
@@ -376,11 +371,11 @@ public class ZCashUI
         	
         	preferences = new WalletPreferences(os);
         	
-            System.out.println("Starting ZERO Swing Wallet ...");
-            System.out.println("OS: " + System.getProperty("os.name") + " = " + os);
-            System.out.println("Current directory: " + new File(".").getCanonicalPath());
-            System.out.println("Class path: " + System.getProperty("java.class.path"));
-            System.out.println("Environment PATH: " + System.getenv("PATH"));
+        	Log.info("Starting Ƶero Swing Wallet ...");
+        	Log.info("OS: " + System.getProperty("os.name") + " = " + os);
+        	Log.info("Current directory: " + new File(".").getCanonicalPath());
+        	Log.info("Class path: " + System.getProperty("java.class.path"));
+        	Log.info("Environment PATH: " + System.getenv("PATH"));
 
         	if (os == OS_TYPE.WINDOWS)
         	{
@@ -398,7 +393,7 @@ public class ZCashUI
         		{            
         			for (LookAndFeelInfo ui : UIManager.getInstalledLookAndFeels())
         			{
-        				System.out.println("Available look and feel: " + ui.getName() + " " + ui.getClassName());
+        				Log.info("Available look and feel: " + ui.getName() + " " + ui.getClassName());
         				if (ui.getName().equals("Nimbus"))
         				{
         					UIManager.setLookAndFeel(ui.getClassName());
@@ -406,8 +401,6 @@ public class ZCashUI
         				};
         			}
         		}
-            
-            preferences = new WalletPreferences(os);
             
             // If zcashd is currently not running, do a startup of the daemon as a child process
             // It may be started but not ready - then also show dialog
@@ -426,7 +419,7 @@ public class ZCashUI
             		// If more than 20 minutes behind in the blockchain - startup in progress
             		if ((System.currentTimeMillis() - info.lastBlockDate.getTime()) > (20 * 60 * 1000))
             		{
-            			System.out.println("Current blockchain synchronization date is"  + 
+            			Log.info("Current blockchain synchronization date is"  + 
             		                       new Date(info.lastBlockDate.getTime()));
             			daemonStartInProgress = true;
             		}
@@ -436,7 +429,7 @@ public class ZCashUI
                 if ((wce.getMessage().indexOf("{\"code\":-28") != -1) || // Started but not ready
                 	(wce.getMessage().indexOf("error code: -28") != -1))
                 {
-                	System.out.println("zcashd is currently starting...");
+                	Log.info("zcashd is currently starting...");
                 	daemonStartInProgress = true;
                 }
             }
@@ -444,7 +437,7 @@ public class ZCashUI
             StartupProgressDialog startupBar = null;
             if ((zcashdInfo.status != DAEMON_STATUS.RUNNING) || (daemonStartInProgress))
             {
-            	System.out.println(
+            	Log.info(
             		"zcashd is not runing at the moment or has not started/synchronized 100% - showing splash...");
 	            startupBar = new StartupProgressDialog(initialClientCaller);
 	            startupBar.setVisible(true);
@@ -453,12 +446,12 @@ public class ZCashUI
             initialClientCaller = null;
             
             // Main GUI is created here
-            ZCashUI ui = new ZCashUI(startupBar);
+            ZeroWallet ui = new ZeroWallet(startupBar);
             ui.setVisible(true);
 
         } catch (InstallationDetectionException ide)
         {
-            ide.printStackTrace();
+        	Log.error("Unexpected error: ", ide);
             JOptionPane.showMessageDialog(
                 null,
                 "This program was started in directory: " + OSUtil.getProgramDirectory() + "\n" +
@@ -469,7 +462,7 @@ public class ZCashUI
             System.exit(1);
         } catch (WalletCallException wce)
         {
-            wce.printStackTrace();
+        	Log.error("Unexpected error: ", wce);
 
             if ((wce.getMessage().indexOf("{\"code\":-28,\"message\"") != -1) ||
             	(wce.getMessage().indexOf("error code: -28") != -1))
@@ -485,8 +478,8 @@ public class ZCashUI
             {
                 JOptionPane.showMessageDialog(
                     null,
-                    "There was a problem communicating with the Zero daemon/wallet. \n" +
-                    "Please ensure that the Zero server zcashd is started (e.g. via \n" + 
+                    "There was a problem communicating with the Ƶero daemon/wallet. \n" +
+                    "Please ensure that the Ƶero server zcashd is started (e.g. via \n" + 
                     "command  \"zcashd --daemon\"). Error message is: \n" +
                      wce.getMessage() +
                     "See the console output for more detailed error information!",
@@ -497,7 +490,7 @@ public class ZCashUI
             System.exit(2);
         } catch (Exception e)
         {
-            e.printStackTrace();
+        	Log.error("Unexpected error: ", e);
             JOptionPane.showMessageDialog(
                 null,
                 "A general unexpected critical error has occurred: \n" + e.getMessage() + "\n" +
@@ -505,6 +498,17 @@ public class ZCashUI
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
             System.exit(3);
+        }  catch (Error err)
+        {
+        	// Last resort catch for unexpected problems - just to inform the user
+        	Log.error("Unexpected unrecovverable error: ", err);
+            JOptionPane.showMessageDialog(
+                null,
+                "A general unexpected critical/unrecoverable error has occurred: \n" + err.getMessage() + "\n" +
+                "See the console output for more detailed error information!",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            System.exit(4);
         }
     }
 }

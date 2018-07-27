@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
 
 
 /**
@@ -47,6 +47,8 @@ import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
 public class WalletTabPanel
 	extends JPanel
 {	
+	private static final long serialVersionUID = -109632532285975539L;
+	
 	// Lists of threads and timers that may be stopped if necessary
 	protected List<Timer> timers                   = null;
 	protected List<DataGatheringThread<?>> threads = null;	
@@ -106,7 +108,7 @@ public class WalletTabPanel
 				} catch (InterruptedException ie)
 				{
 					// One of the rare cases where we do nothing
-					ie.printStackTrace();
+					Log.error("Unexpected error: ", ie);
 				}
 				
 				endWait = System.currentTimeMillis();

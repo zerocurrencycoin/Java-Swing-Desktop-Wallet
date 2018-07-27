@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -65,6 +65,8 @@ import javax.swing.border.EtchedBorder;
 public class TransactionTable 
 	extends DataTable 
 {	
+	private static final long serialVersionUID = 2742134843014801858L;
+
 	public TransactionTable(final Object[][] rowData, final Object[] columnNames, 
 			                final JFrame parent, final ZCashClientCaller caller)
 	{
@@ -87,7 +89,7 @@ public class TransactionTable
 						String txID = TransactionTable.this.getModel().getValueAt(lastRow, 6).toString();
 						txID = txID.replaceAll("\"", ""); // In case it has quotes
 						
-						System.out.println("Transaction ID for detail dialog is: " + txID);
+						Log.info("Transaction ID for detail dialog is: " + txID);
 						Map<String, String> details = caller.getRawTransactionDetails(txID);
 						String rawTrans = caller.getRawTransaction(txID);
 						
@@ -95,8 +97,11 @@ public class TransactionTable
 						dd.setVisible(true);
 					} catch (Exception ex)
 					{
-						ex.printStackTrace();
-						// TODO: report exception to user
+						Log.error("Unexpected error: ", ex);
+						JOptionPane.showMessageDialog(new JFrame(),
+								"There was an unexpectd error : " + ex.getLocalizedMessage(),
+								"Error",
+						        JOptionPane.ERROR_MESSAGE);
 					}
 				} else
 				{
@@ -122,12 +127,12 @@ public class TransactionTable
 						String txID = TransactionTable.this.getModel().getValueAt(lastRow, 6).toString();
 						txID = txID.replaceAll("\"", ""); // In case it has quotes
 						
-						System.out.println("Transaction ID for block explorer is: " + txID);
+						Log.info("Transaction ID for block explorer is: " + txID);
 						Desktop.getDesktop().browse(
 							new URL("https://zeroexplorer.com/?tx=" + txID).toURI());
 					} catch (Exception ex)
 					{
-						ex.printStackTrace();
+						Log.error("Unexpected error: ", ex);
 						// TODO: report exception to user
 					}
 				} else
@@ -172,13 +177,13 @@ public class TransactionTable
 						}
 						
 						
-						System.out.println("Transaction ID for Memo field is: " + txID);
-						System.out.println("Account for Memo field is: " + acc);
+						Log.info("Transaction ID for Memo field is: " + txID);
+						Log.info("Account for Memo field is: " + acc);
 						parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 						// TODO: some day support outgoing Z transactions
  						String MemoField = caller.getMemoField(acc, txID);
  						parent.setCursor(oldCursor);
- 						System.out.println("Memo field is: " + MemoField);
+ 						Log.info("Memo field is: " + MemoField);
  						
  						if (MemoField != null)
  						{
@@ -197,7 +202,7 @@ public class TransactionTable
 					} catch (Exception ex)
 					{
 						parent.setCursor(oldCursor);
-						ex.printStackTrace();
+						Log.error("", ex);
 						// TODO: report exception to user
 					}
 				} else
@@ -210,16 +215,16 @@ public class TransactionTable
 	} // End constructor
 
 
-	
-	
 	private static class DetailsDialog
 		extends JDialog
 	{
+		private static final long serialVersionUID = 3527844728750816906L;
+
 		public DetailsDialog(JFrame parent, Map<String, String> details)
 			throws UnsupportedEncodingException
 		{
 			this.setTitle("Transaction details...");
-			this.setSize(600,  310);
+			this.setSize(620,  310);
 		    this.setLocation(100, 100);
 			this.setLocationRelativeTo(parent);
 			this.setModal(true);
@@ -230,9 +235,9 @@ public class TransactionTable
 			JPanel tempPanel = new JPanel(new BorderLayout(0, 0));
 			tempPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 			JLabel infoLabel = new JLabel(
-					"<html><span style=\"font-size:9px;\">" +
+					"<html><span style=\"font-size:0.85em;\">" +
 					"The table shows the information about the transaction with technical details as " +
-					"they appear at Zero network level." +
+					"they appear at ZCash network level." +
 				    "</span>");
 			infoLabel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 			tempPanel.add(infoLabel, BorderLayout.CENTER);

@@ -1,8 +1,7 @@
 // Code was originally written by developer - https://github.com/zlatinb
 // Taken from repository https://github.com/zlatinb/zcash-swing-wallet-ui under an MIT licemse
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -21,8 +20,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -46,7 +43,9 @@ import javax.swing.table.TableColumn;
 
 public class AddressBookPanel extends JPanel {
     
-    private static class AddressBookEntry {
+	private static final long serialVersionUID = -3112417565569262132L;
+
+	private static class AddressBookEntry {
         final String name,address;
         AddressBookEntry(String name, String address) {
             this.name = name;
@@ -75,7 +74,7 @@ public class AddressBookPanel extends JPanel {
         newContactButton.addActionListener(new NewContactActionListener());
         panel.add(newContactButton);
                 
-        sendCashButton = new JButton("Send Zero");
+        sendCashButton = new JButton("Send Ƶero");
         sendCashButton.addActionListener(new SendCashActionListener());
         sendCashButton.setEnabled(false);
         panel.add(sendCashButton);
@@ -148,7 +147,10 @@ public class AddressBookPanel extends JPanel {
                     printWriter.println(entry.address+","+entry.name);
             }
         } catch (IOException bad) {
-        	// TODO: report error to the user!
+			JOptionPane.showMessageDialog(new JFrame(),
+					"There was an error saving the Address Book",
+					"Error",
+			        JOptionPane.ERROR_MESSAGE);
         	bad.printStackTrace();
         	System.out.println("Saving Address Book Failed!!!!");
         }

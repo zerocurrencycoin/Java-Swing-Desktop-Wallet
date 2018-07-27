@@ -26,9 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **********************************************************************************/
-package com.vaklinov.zcashui;
-
-
+package com.vaklinov.zerowallet;
 
 /**
  * This thread may be used to periodically and asynchronously load data if the load operation 
@@ -151,7 +149,7 @@ public class DataGatheringThread<T>
 					} catch (InterruptedException ie)
 					{
 						// One of the rare cases where we do nothing
-						ie.printStackTrace();
+						Log.error("Unexpected error: ", ie);
 					}
 					
 					endWait = System.currentTimeMillis();
@@ -166,6 +164,8 @@ public class DataGatheringThread<T>
 				break mainLoop;
 			}
 		}
+		
+		Log.info("Ending data gathering thread {0} ...", this.getName());
 	} // End public void run()
 	
 	
@@ -182,14 +182,14 @@ public class DataGatheringThread<T>
 		{
 			if (!this.suspended)
 			{
-				e.printStackTrace();
+				Log.error("Unexpected error: ", e);
 				if (this.errorReporter != null)
 				{
 					this.errorReporter.reportError(e);
 				}
 			} else
 			{
-				System.out.println("DataGatheringThread: ignoring " + e.getClass().getName() + " due to suspension!");
+				Log.warning("DataGatheringThread: ignoring " + e.getClass().getName() + " due to suspension!");
 			}
 		}
 		

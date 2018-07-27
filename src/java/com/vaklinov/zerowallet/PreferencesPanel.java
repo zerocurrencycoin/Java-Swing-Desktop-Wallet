@@ -1,22 +1,16 @@
-package com.vaklinov.zcashui;
+package com.vaklinov.zerowallet;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.SpringLayout.Constraints;
-import javax.swing.border.EtchedBorder;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import javax.swing.UIManager;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.BoxLayout;
-import java.awt.GridLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;
 
 /**
  * Preferences UI
@@ -26,7 +20,7 @@ import java.awt.GridLayout;
 
 public class PreferencesPanel extends JPanel {
 
-	private static final long serialVersionUID = 5635379194672422151L;
+	private static final long serialVersionUID = 5635379194672423151L;
 	private JTextField mainnetRPCPortTextField;
 	private JTextField testnetRPCPortTextField;
 	private JTextField commandLineToolsDirTextField;
@@ -48,26 +42,30 @@ public class PreferencesPanel extends JPanel {
 		preferencesPanel.add(fieldsPanel, BorderLayout.NORTH);
 
 		JLabel mainnetPortLabel = new JLabel("mainnet RPC port");
-		mainnetPortLabel.setBounds(85, 17, 109, 16);
+		mainnetPortLabel.setEnabled(false);
+		mainnetPortLabel.setBounds(86, 39, 109, 16);
 		
 		mainnetRPCPortTextField = new JTextField();
-		mainnetRPCPortTextField.setBounds(206, 12, 82, 26);
+		mainnetRPCPortTextField.setEnabled(false);
+		mainnetRPCPortTextField.setBounds(207, 34, 82, 26);
 		mainnetRPCPortTextField.setText((String) null);
 		mainnetRPCPortTextField.setColumns(6);
 		
 		JLabel testnetPortLabel = new JLabel("testnet RPC port");
-		testnetPortLabel.setBounds(92, 45, 102, 16);
+		testnetPortLabel.setEnabled(false);
+		testnetPortLabel.setBounds(96, 67, 102, 16);
 		
 		testnetRPCPortTextField = new JTextField();
-		testnetRPCPortTextField.setBounds(206, 40, 82, 26);
+		testnetRPCPortTextField.setEnabled(false);
+		testnetRPCPortTextField.setBounds(207, 62, 82, 26);
 		testnetRPCPortTextField.setText((String) null);
 		testnetRPCPortTextField.setColumns(6);
 		
 		JLabel commandLineToolsLabel = new JLabel("Command line tools directory");
-		commandLineToolsLabel.setBounds(7, 69, 187, 16);
+		commandLineToolsLabel.setBounds(6, 11, 187, 16);
 		
 		commandLineToolsDirTextField = new JTextField();
-		commandLineToolsDirTextField.setBounds(206, 64, 394, 26);
+		commandLineToolsDirTextField.setBounds(205, 6, 394, 26);
 		commandLineToolsDirTextField.setText((String) null);
 		commandLineToolsDirTextField.setColumns(32);
 		fieldsPanel.setLayout(null);
