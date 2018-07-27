@@ -5,7 +5,7 @@
 This program provides a Graphical User Interface (GUI) for the ZERO client tools that acts as a wrapper and 
 presents the information in a user-friendly manner.
 
-![Screenshot](https://github.com/vaklinov/zero-swing-wallet-ui/raw/master/docs/ZeroWallet.png "Main Window")
+![Screenshot](https://github.com/zerocurrencycoin/Zero-Java-Swing-Desktop-Wallet/raw/master/docs/ZeroWallet.png "Main Window")
 
 
 ## Building, installing and running the Wallet GUI
