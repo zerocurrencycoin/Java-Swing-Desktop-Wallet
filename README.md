@@ -10,7 +10,7 @@ presents the information in a user-friendly manner.
 
 ## Building, installing and running the Wallet GUI
 
-Before installing the Desktop GUI Wallet you need to have Ƶero up and running. The following [guide](https://github.com/zerocurrency/zero) explains how to set up [Ƶero](https://github.com/zerocurrency/zero#building). 
+Before installing the Desktop GUI Wallet you need to have Ƶero up and running. The following [guide](https://github.com/zerocurrency/zero#building) explains how to set up [Ƶero](https://github.com/zerocurrency/zero). 
 
 **For security reasons it is recommended to always build the GUI wallet program from GitHub**
 **[source](https://github.com/zerocurrencycoin/Zero-SwingWallet-Windows-MAC/releases/tag/0.74).**
