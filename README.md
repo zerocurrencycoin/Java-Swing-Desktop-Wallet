@@ -1,6 +1,6 @@
-# [Ƶero](https://bitcointalk.org/index.php?topic=1796036.0) Desktop GUI Wallet
+# [Ƶero](https://github.com/zerocurrencycoin/Zero) Desktop GUI Wallet
 
-## Graphical user interface wrapper for the [Ƶero](https://bitcointalk.org/index.php?topic=1796036.0) command line tools
+## Graphical user interface wrapper for the [Ƶero](https://github.com/zerocurrencycoin/Zero) command line tools
 
 This program provides a Graphical User Interface (GUI) for the Ƶero client tools that acts as a wrapper and 
 presents the information in a user-friendly manner.
