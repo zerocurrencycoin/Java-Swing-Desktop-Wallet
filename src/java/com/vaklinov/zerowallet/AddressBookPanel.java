@@ -1,5 +1,5 @@
 // Code was originally written by developer - https://github.com/zlatinb
-// Taken from repository https://github.com/zlatinb/zcash-swing-wallet-ui under an MIT licemse
+// Taken from repository https://github.com/zlatinb/zero-swing-wallet-ui under an MIT licemse
 package com.vaklinov.zerowallet;
 
 import java.awt.FlowLayout;

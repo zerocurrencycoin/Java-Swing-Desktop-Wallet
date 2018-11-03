@@ -40,7 +40,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
-import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZeroClientCaller.WalletCallException;
 
 
 /**
@@ -56,8 +56,8 @@ public class WalletOperations
 	private SendCashPanel  sendCash;
 	private AddressesPanel addresses;
 	
-	private ZCashInstallationObserver installationObserver;
-	private ZCashClientCaller         clientCaller;
+	private ZeroInstallationObserver installationObserver;
+	private ZeroClientCaller         clientCaller;
 	private StatusUpdateErrorReporter errorReporter;
 
 
@@ -67,8 +67,8 @@ public class WalletOperations
 			                AddressesPanel addresses,
 			                SendCashPanel  sendCash,
 			                
-			                ZCashInstallationObserver installationObserver, 
-			                ZCashClientCaller clientCaller,
+			                ZeroInstallationObserver installationObserver, 
+			                ZeroClientCaller clientCaller,
 			                StatusUpdateErrorReporter errorReporter) 
         throws IOException, InterruptedException, WalletCallException 
 	{
@@ -128,7 +128,7 @@ public class WalletOperations
 				JOptionPane.showMessageDialog(
 					this.parent, 
 					"An unexpected error occurred while encrypting the wallet!\n" +
-					"It is recommended to stop and restart both zcashd and the GUI wallet! \n" +
+					"It is recommended to stop and restart both zerod and the GUI wallet! \n" +
 					"\n" + wce.getMessage().replace(",", ",\n"),
 					"Error in encrypting wallet...", JOptionPane.ERROR_MESSAGE);
 				return;
@@ -136,7 +136,7 @@ public class WalletOperations
 			
 			JOptionPane.showMessageDialog(
 				this.parent, 
-				"The wallet has been encrypted sucessfully and zcashd has stopped.\n" +
+				"The wallet has been encrypted sucessfully and zerod has stopped.\n" +
 				"The GUI wallet will be stopped as well. Please restart both. In\n" +
 				"addtion the internal wallet keypool has been flushed. You need\n" +
 				"to make a new backup..." +
@@ -197,7 +197,7 @@ public class WalletOperations
 			JOptionPane.showMessageDialog(
 				this.parent, 
 				"The wallet has been backed up successfully to file: " + f.getName() + "\n" +
-				"in the backup directory provided to zcashd (-exportdir=<dir>).\nFull path is: " + 
+				"in the backup directory provided to zerod (-exportdir=<dir>).\nFull path is: " + 
 				path,
 				"Wallet is backed up...", JOptionPane.INFORMATION_MESSAGE);
 			
@@ -256,10 +256,10 @@ public class WalletOperations
 				this.parent, 
 				"The wallet private keys have been exported successfully to file:\n" + 
 				f.getName() + "\n" +
-				"in the backup directory provided to zcashd (-exportdir=<dir>).\nFull path is: " + 
+				"in the backup directory provided to zerod (-exportdir=<dir>).\nFull path is: " + 
 				path + "\n" +
 				"You need to protect this file from unauthorized access. Anyone who\n" +
-				"has access to the private keys can spend the ZCash balance!",
+				"has access to the private keys can spend the Zero balance!",
 				"Wallet private key export...", JOptionPane.INFORMATION_MESSAGE);
 			
 		} catch (Exception e)
@@ -438,14 +438,14 @@ public class WalletOperations
         JOptionPane.showMessageDialog(
             this.parent,
             "For security reasons the wallet may be backed up/private keys exported only if\n" +
-            "the zcashd parameter -exportdir=<dir> has been set. If you started zcashd \n" +
-            "manually, you ought to have provided this parameter. When zcashd is started \n" +
+            "the zerod parameter -exportdir=<dir> has been set. If you started zerod \n" +
+            "manually, you ought to have provided this parameter. When zerod is started \n" +
             "automatically by the GUI wallet the directory provided as parameter to -exportdir\n" +
             "is the user home directory: " + OSUtil.getUserHomeDirectory().getCanonicalPath() +"\n" +
             "Please navigate to the directory provided as -exportdir=<dir> and select a\n"+ 
             "filename in it to backup/export private keys. If you select another directory\n" +
             "instead, the destination file will still end up in the directory provided as \n" +
-            "-exportdir=<dir>. If this parameter was not provided to zcashd, the process\n" +
+            "-exportdir=<dir>. If this parameter was not provided to zerod, the process\n" +
             "will fail with a security check error. The filename needs to consist of only\n" + 
             "alphanumeric characters (e.g. dot is not allowed).\n\n" +
             "(This message will be shown only once)",

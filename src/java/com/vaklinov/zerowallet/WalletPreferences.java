@@ -86,12 +86,12 @@ public class WalletPreferences {
 		if (os == OS_TYPE.LINUX || os == OS_TYPE.MAC_OS)
 			defaultCommandLineToolsDir = commandLineToolsDirDefault;
 		else
-			defaultCommandLineToolsDir = System.getenv("APPDATA") + "\\ZCash";
+			defaultCommandLineToolsDir = System.getenv("APPDATA") + "\\Zero";
 
 		if (!Files.isDirectory(Paths.get(defaultCommandLineToolsDir))) {
 			Log.info("Will ask for the directory where the command line tools are");
 			JOptionPane.showMessageDialog(new JFrame(),
-					"Please select the directory where the command line utils are installed:\nzcashd, zcash-cli and zcash-tx",
+					"Please select the directory where the command line utils are installed:\nzerod, zero-cli and zero-tx",
 					"Directory selection",
 			        JOptionPane.INFORMATION_MESSAGE);
 			JFileChooser dirChooser = new JFileChooser();

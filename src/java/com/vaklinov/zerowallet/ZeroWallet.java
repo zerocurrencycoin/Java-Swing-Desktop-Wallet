@@ -57,11 +57,11 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import com.vaklinov.zerowallet.OSUtil.OS_TYPE;
-import com.vaklinov.zerowallet.ZCashClientCaller.NetworkAndBlockchainInfo;
-import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
-import com.vaklinov.zerowallet.ZCashInstallationObserver.DAEMON_STATUS;
-import com.vaklinov.zerowallet.ZCashInstallationObserver.DaemonInfo;
-import com.vaklinov.zerowallet.ZCashInstallationObserver.InstallationDetectionException;
+import com.vaklinov.zerowallet.ZeroClientCaller.NetworkAndBlockchainInfo;
+import com.vaklinov.zerowallet.ZeroClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZeroInstallationObserver.DAEMON_STATUS;
+import com.vaklinov.zerowallet.ZeroInstallationObserver.DaemonInfo;
+import com.vaklinov.zerowallet.ZeroInstallationObserver.InstallationDetectionException;
 
 
 /**
@@ -74,8 +74,8 @@ public class ZeroWallet
 {
 	private static final long serialVersionUID = -8056343020670619627L;
 
-	private ZCashInstallationObserver installationObserver;
-    private ZCashClientCaller         clientCaller;
+	private ZeroInstallationObserver installationObserver;
+    private ZeroClientCaller         clientCaller;
     private StatusUpdateErrorReporter errorReporter;
 
     private WalletOperations walletOps;
@@ -114,8 +114,8 @@ public class ZeroWallet
         Container contentPane = this.getContentPane();
 
         errorReporter = new StatusUpdateErrorReporter(this);
-        installationObserver = new ZCashInstallationObserver(preferences.commandLineToolsDir());
-        clientCaller = new ZCashClientCaller(preferences.commandLineToolsDir());
+        installationObserver = new ZeroInstallationObserver(preferences.commandLineToolsDir());
+        clientCaller = new ZeroClientCaller(preferences.commandLineToolsDir());
 
         // Build content
         tabs = new JTabbedPane();
@@ -317,7 +317,7 @@ public class ZeroWallet
                     ZeroWallet.this.getRootPane().getParent(),
                     "The Ƶero GUI Wallet is currently considered experimental. Use of this software\n" +
                     "comes at your own risk! Be sure to read the list of known issues and limitations\n" +
-                    "at this page: https://github.com/vaklinov/zcash-swing-wallet-ui\n\n" +
+                    "at this page: https://github.com/vaklinov/zero-swing-wallet-ui\n\n" +
                     "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n" +
                     "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n" +
                     "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n" +
@@ -402,18 +402,18 @@ public class ZeroWallet
         			}
         		}
             
-            // If zcashd is currently not running, do a startup of the daemon as a child process
+            // If zerod is currently not running, do a startup of the daemon as a child process
             // It may be started but not ready - then also show dialog
-            ZCashInstallationObserver initialInstallationObserver = 
-            	new ZCashInstallationObserver(preferences.commandLineToolsDir());
-            DaemonInfo zcashdInfo = initialInstallationObserver.getDaemonInfo();
+            ZeroInstallationObserver initialInstallationObserver = 
+            	new ZeroInstallationObserver(preferences.commandLineToolsDir());
+            DaemonInfo zerodInfo = initialInstallationObserver.getDaemonInfo();
             initialInstallationObserver = null;
             
-            ZCashClientCaller initialClientCaller = new ZCashClientCaller(preferences.commandLineToolsDir());
+            ZeroClientCaller initialClientCaller = new ZeroClientCaller(preferences.commandLineToolsDir());
             boolean daemonStartInProgress = false;
             try
             {
-            	if (zcashdInfo.status == DAEMON_STATUS.RUNNING)
+            	if (zerodInfo.status == DAEMON_STATUS.RUNNING)
             	{
             		NetworkAndBlockchainInfo info = initialClientCaller.getNetworkAndBlockchainInfo();
             		// If more than 20 minutes behind in the blockchain - startup in progress
@@ -429,16 +429,16 @@ public class ZeroWallet
                 if ((wce.getMessage().indexOf("{\"code\":-28") != -1) || // Started but not ready
                 	(wce.getMessage().indexOf("error code: -28") != -1))
                 {
-                	Log.info("zcashd is currently starting...");
+                	Log.info("zerod is currently starting...");
                 	daemonStartInProgress = true;
                 }
             }
             
             StartupProgressDialog startupBar = null;
-            if ((zcashdInfo.status != DAEMON_STATUS.RUNNING) || (daemonStartInProgress))
+            if ((zerodInfo.status != DAEMON_STATUS.RUNNING) || (daemonStartInProgress))
             {
             	Log.info(
-            		"zcashd is not runing at the moment or has not started/synchronized 100% - showing splash...");
+            		"zerod is not runing at the moment or has not started/synchronized 100% - showing splash...");
 	            startupBar = new StartupProgressDialog(initialClientCaller);
 	            startupBar.setVisible(true);
 	            startupBar.waitForStartup();
@@ -469,7 +469,7 @@ public class ZeroWallet
             {
                 JOptionPane.showMessageDialog(
                         null,
-                        "It appears that zcashd has been started but is not ready to accept wallet\n" +
+                        "It appears that zerod has been started but is not ready to accept wallet\n" +
                         "connections. It is still loading the wallet and blockchain. Please try to \n" +
                         "start the GUI wallet later...",
                         "Wallet communication error",
@@ -479,8 +479,8 @@ public class ZeroWallet
                 JOptionPane.showMessageDialog(
                     null,
                     "There was a problem communicating with the Ƶero daemon/wallet. \n" +
-                    "Please ensure that the Ƶero server zcashd is started (e.g. via \n" + 
-                    "command  \"zcashd --daemon\"). Error message is: \n" +
+                    "Please ensure that the Ƶero server zerod is started (e.g. via \n" + 
+                    "command  \"zerod --daemon\"). Error message is: \n" +
                      wce.getMessage() +
                     "See the console output for more detailed error information!",
                     "Wallet communication error",

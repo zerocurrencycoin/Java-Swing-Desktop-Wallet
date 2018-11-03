@@ -36,7 +36,7 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZeroClientCaller.WalletCallException;
 
 
 /**

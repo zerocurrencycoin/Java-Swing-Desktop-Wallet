@@ -61,7 +61,7 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
 
-import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZeroClientCaller.WalletCallException;
 
 
 /**
@@ -74,7 +74,7 @@ public class SendCashPanel
 {
 	private static final long serialVersionUID = -2620238091689254278L;
 	
-	private ZCashClientCaller clientCaller;
+	private ZeroClientCaller clientCaller;
 	private StatusUpdateErrorReporter errorReporter;
 	
 	private JComboBox<String>  balanceAddressCombo     = null;
@@ -98,7 +98,7 @@ public class SendCashPanel
 	private int          operationStatusCounter      = 0;
 	
 
-	public SendCashPanel(ZCashClientCaller clientCaller,  StatusUpdateErrorReporter errorReporter)
+	public SendCashPanel(ZeroClientCaller clientCaller,  StatusUpdateErrorReporter errorReporter)
 		throws IOException, InterruptedException, WalletCallException
 	{
 		this.timers = new ArrayList<Timer>();

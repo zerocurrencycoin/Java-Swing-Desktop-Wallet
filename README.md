@@ -61,16 +61,16 @@ The details of how to build it are described below (easy to follow).
   3.1. If you have built Zero from source code:
 
    Assuming you have already built it from source code in directory `/home/user/zero/src` (for 
-   example - this is the typical build dir. for Zero v1.0.6) which contains the command line tools `zcash-cli` 
-   and `zcashd` you need to take the created file `./build/jars/.jar` and copy it 
-   to directory `/home/user/zero/src` (the same dir. that contains `zcash-cli` and `zcashd`). Example copy command:
+   example - this is the typical build dir. for Zero v1.0.6) which contains the command line tools `zero-cli` 
+   and `zerod` you need to take the created file `./build/jars/.jar` and copy it 
+   to directory `/home/user/zero/src` (the same dir. that contains `zero-cli` and `zerod`). Example copy command:
    ```
    user@ubuntu:~/build-dir/zero-swing-wallet-ui$ cp ./build/jars/.jar /home/user/zero/src    
    ```
 
 4. Running the installed Zero GUI wallet
 
-   Before running the GUI you need to start zcashd (e.g. `zcashd --daemon`). The wallet GUI is a Java program packaged 
+   Before running the GUI you need to start zerod (e.g. `zerod --daemon`). The wallet GUI is a Java program packaged 
    as an executable JAR file. It may be run from command line or started from another GUI tool (e.g. file manager). 
    Assuming you have already installed Zero and the GUI Wallet `.jar` in 
    directory `/home/user/zero/src` one way to run it from command line is:

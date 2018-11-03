@@ -102,8 +102,8 @@ public class Util
 	{
     	JsonObject jInfo = new JsonObject();
     	
-    	// Error message here comes from ZCash 1.0.7+ and is like:
-    	//zcash-cli getinfo
+    	// Error message here comes from Zero 1.0.7+ and is like:
+    	//zero-cli getinfo
     	//error code: -28
     	//error message:
     	//Loading block index...

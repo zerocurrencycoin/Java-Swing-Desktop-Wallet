@@ -43,7 +43,7 @@ import com.vaklinov.zerowallet.OSUtil.OS_TYPE;
  *
  * @author Ivan Vaklinov <ivan@vaklinov.com>
  */
-public class ZCashInstallationObserver
+public class ZeroInstallationObserver
 {
 	public static class DaemonInfo
 	{
@@ -60,7 +60,7 @@ public class ZCashInstallationObserver
 		UNABLE_TO_ASCERTAIN;
 	}
 
-	public ZCashInstallationObserver(String installDir)
+	public ZeroInstallationObserver(String installDir)
 		throws IOException
 	{
 		// Detect daemon and client tools installation
@@ -73,26 +73,26 @@ public class ZCashInstallationObserver
 			    "a directory or is otherwise inaccessible to the wallet!");
 		}
 
-		File zcashd = new File(dir, OSUtil.getZCashd());
-		File zcashcli = new File(dir, OSUtil.getZCashCli());
+		File zerod = new File(dir, OSUtil.getZerod());
+		File zerocli = new File(dir, OSUtil.getZeroCli());
 
-		if ((!zcashd.exists()) || (!zcashcli.exists()))
+		if ((!zerod.exists()) || (!zerocli.exists()))
 		{
-			zcashd = OSUtil.findZCashCommand(OSUtil.getZCashd());
-			zcashcli = OSUtil.findZCashCommand(OSUtil.getZCashCli());
+			zerod = OSUtil.findZeroCommand(OSUtil.getZerod());
+			zerocli = OSUtil.findZeroCommand(OSUtil.getZeroCli());
 		}
 
 		Log.info("Using Ƶero utilities: " +
-		                   "zcashd: "    + ((zcashd != null) ? zcashd.getCanonicalPath() : "<MISSING>") + ", " +
-		                   "zcash-cli: " + ((zcashcli != null) ? zcashcli.getCanonicalPath() : "<MISSING>"));
+		                   "zerod: "    + ((zerod != null) ? zerod.getCanonicalPath() : "<MISSING>") + ", " +
+		                   "zero-cli: " + ((zerocli != null) ? zerocli.getCanonicalPath() : "<MISSING>"));
 
-		if ((zcashd == null) || (zcashcli == null) || (!zcashd.exists()) || (!zcashcli.exists()))
+		if ((zerod == null) || (zerocli == null) || (!zerod.exists()) || (!zerocli.exists()))
 		{
 			throw new InstallationDetectionException(
 				"The Ƶero GUI Wallet installation directory " + installDir + " needs\nto contain " +
-				"the command line utilities zcashd and zcash-cli. At least one of them is missing! \n" +
-				"Please place files ZeroSwingWalletUI.jar, " + OSUtil.getZCashCli() + ", " + 
-				OSUtil.getZCashd() + " in the same directory.");
+				"the command line utilities zerod and zero-cli. At least one of them is missing! \n" +
+				"Please place files ZeroSwingWalletUI.jar, " + OSUtil.getZeroCli() + ", " + 
+				OSUtil.getZerod() + " in the same directory.");
 		}
 	}
 
@@ -126,7 +126,7 @@ public class ZCashInstallationObserver
 		while ((line = lnr.readLine()) != null)
 		{
 			StringTokenizer st = new StringTokenizer(line, " \t", false);
-			boolean foundZCash = false;
+			boolean foundZero = false;
 			for (int i = 0; i < 11; i++)
 			{
 				String token = null;
@@ -158,16 +158,16 @@ public class ZCashInstallationObserver
 					} catch (NumberFormatException nfe) { /* TODO: Log or handle exception */ };
 				} else if (i == 10)
 				{
-					if ((token.equals("zcashd")) || (token.endsWith("/zcashd")))
+					if ((token.equals("zerod")) || (token.endsWith("/zerod")))
 					{
 						info.status = DAEMON_STATUS.RUNNING;
-						foundZCash = true;
+						foundZero = true;
 						break;
 					}
 				}
 			}
 
-			if (foundZCash)
+			if (foundZero)
 			{
 				break;
 			}
@@ -199,7 +199,7 @@ public class ZCashInstallationObserver
 		while ((line = lnr.readLine()) != null)
 		{
 			StringTokenizer st = new StringTokenizer(line, " \t", false);
-			boolean foundZCash = false;
+			boolean foundZero = false;
 			String size = "";
 			for (int i = 0; i < 8; i++)
 			{
@@ -224,13 +224,13 @@ public class ZCashInstallationObserver
 
 				if (i == 0)
 				{
-					if (token.equals("zcashd.exe") || token.equals("zcashd"))
+					if (token.equals("zerod.exe") || token.equals("zerod"))
 					{
 						info.status = DAEMON_STATUS.RUNNING;
-						foundZCash = true;
-						//System.out.println("ZCashd process data is: " + line);
+						foundZero = true;
+						//System.out.println("Zerod process data is: " + line);
 					}
-				} else if ((i >= 4) && foundZCash)
+				} else if ((i >= 4) && foundZero)
 				{
 					try
 					{
@@ -243,7 +243,7 @@ public class ZCashInstallationObserver
 				} 
 			} // End parsing row
 
-			if (foundZCash)
+			if (foundZero)
 			{
 				try
 				{
@@ -251,7 +251,7 @@ public class ZCashInstallationObserver
 				} catch (NumberFormatException nfe)
 				{
 					info.residentSizeMB = 0;
-					Log.error("Error: could not find the numeric memory size of zcashd: " + size);
+					Log.error("Error: could not find the numeric memory size of zerod: " + size);
 				};
 				
 				break;

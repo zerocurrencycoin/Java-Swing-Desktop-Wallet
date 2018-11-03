@@ -1,4 +1,4 @@
-package com.vaklinov.zcashtest;
+package com.vaklinov.zerotest;
 
 import java.io.IOException;
 import java.io.Writer;

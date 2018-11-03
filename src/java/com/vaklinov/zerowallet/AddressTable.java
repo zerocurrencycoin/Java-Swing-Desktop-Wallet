@@ -52,7 +52,7 @@ public class AddressTable
 	private static final long serialVersionUID = 6977857316339762068L;
 
 	public AddressTable(final Object[][] rowData, final Object[] columnNames, 
-			            final ZCashClientCaller caller)
+			            final ZeroClientCaller caller)
 	{
 		super(rowData, columnNames);
 		int accelaratorKeyMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
