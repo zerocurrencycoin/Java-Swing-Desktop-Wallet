@@ -13,14 +13,14 @@ presents the information in a user-friendly manner.
 Before installing the Desktop GUI Wallet you need to have Ƶero up and running. The following [guide](https://github.com/zerocurrency/zero#building) explains how to set up [Ƶero](https://github.com/zerocurrency/zero). 
 
 **For security reasons it is recommended to always build the GUI wallet program from GitHub**
-**[source](https://github.com/zerocurrencycoin/Zero-SwingWallet-Windows-MAC/releases/tag/0.74).**
-The details of how to build it are described below (easy to follow). 
+**[source](https://github.com/zerocurrencycoin/Zero-SwingWallet-Windows-MAC/releases/tag/0.75).**
+The details of how to build it are described below (easy to follow).
 
 1. Operating system and tools
 
-   As of April 2017 (Ƶero v1.0.6) this program is mostly tested on Linux. The Linux tools you need 
-   to build and run the Wallet GUI are Git, Java (JDK7 or later) and Ant. If using Ubuntu Linux, 
-   they may be installed via command: 
+   As of November 2018 (Ƶero v2.0.1) this program is mostly tested on Linux. The Linux tools you need
+   to build and run the Wallet GUI are Git, Java (JDK7 or later) and Ant. If using Ubuntu Linux,
+   they may be installed via command:
    ```
    user@ubuntu:~/build-dir$ sudo apt-get install git default-jdk ant
    ``` 
