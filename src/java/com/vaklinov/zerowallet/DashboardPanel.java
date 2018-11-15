@@ -55,11 +55,11 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 import com.vaklinov.zerowallet.OSUtil.OS_TYPE;
-import com.vaklinov.zerowallet.ZCashClientCaller.NetworkAndBlockchainInfo;
-import com.vaklinov.zerowallet.ZCashClientCaller.WalletBalance;
-import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
-import com.vaklinov.zerowallet.ZCashInstallationObserver.DAEMON_STATUS;
-import com.vaklinov.zerowallet.ZCashInstallationObserver.DaemonInfo;
+import com.vaklinov.zerowallet.ZeroClientCaller.NetworkAndBlockchainInfo;
+import com.vaklinov.zerowallet.ZeroClientCaller.WalletBalance;
+import com.vaklinov.zerowallet.ZeroClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZeroInstallationObserver.DAEMON_STATUS;
+import com.vaklinov.zerowallet.ZeroInstallationObserver.DaemonInfo;
 
 
 /**
@@ -73,8 +73,8 @@ public class DashboardPanel
 	private static final long serialVersionUID = -1507226996689759920L;
 	
 	private JFrame parentFrame;
-	private ZCashInstallationObserver installationObserver;
-	private ZCashClientCaller clientCaller;
+	private ZeroInstallationObserver installationObserver;
+	private ZeroClientCaller clientCaller;
 	private StatusUpdateErrorReporter errorReporter;
 	
 	private JLabel networkAndBlockchainLabel = null;
@@ -98,8 +98,8 @@ public class DashboardPanel
 	
 
 	public DashboardPanel(JFrame parentFrame,
-			              ZCashInstallationObserver installationObserver,
-			              ZCashClientCaller clientCaller,
+			              ZeroInstallationObserver installationObserver,
+			              ZeroClientCaller clientCaller,
 			              StatusUpdateErrorReporter errorReporter)
 		throws IOException, InterruptedException, WalletCallException
 	{
@@ -389,7 +389,7 @@ public class DashboardPanel
 		}
 		
 		String text =
-			"<html><span style=\"font-weight:bold;color:#303030\">zcashd</span> status: " + 
+			"<html><span style=\"font-weight:bold;color:#303030\">zerod</span> status: " + 
 		    daemonStatus + ",  " + runtimeInfo + " <br/>" +
 			"Wallet: <span style=\"font-weight:bold;color:#303030\">" + walletDAT.getCanonicalPath() + "</span>" + 
 			walletEncryption + " <br/> " +

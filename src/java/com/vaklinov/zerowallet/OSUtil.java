@@ -99,33 +99,33 @@ public class OSUtil
 	}
 	
 	
-	// Returns the name of the zcashd server - may vary depending on the OS.
-	public static String getZCashd()
+	// Returns the name of the zerod server - may vary depending on the OS.
+	public static String getZerod()
 	{
-		String zcashd = "zcashd";
+		String zerod = "zerod";
 		
 		OS_TYPE os = getOSType();
 		if (os == OS_TYPE.WINDOWS)
 		{
-			zcashd += ".exe";
+			zerod += ".exe";
 		}
 		
-		return zcashd;
+		return zerod;
 	}
 	
 	
-	// Returns the name of the zcash-cli tool - may vary depending on the OS.
-	public static String getZCashCli()
+	// Returns the name of the zero-cli tool - may vary depending on the OS.
+	public static String getZeroCli()
 	{
-		String zcashcli = "zcash-cli";
+		String zerocli = "zero-cli";
 		
 		OS_TYPE os = getOSType();
 		if (os == OS_TYPE.WINDOWS)
 		{
-			zcashcli += ".exe";
+			zerocli += ".exe";
 		}
 		
-		return zcashcli;
+		return zerocli;
 	}
 
 
@@ -244,18 +244,18 @@ public class OSUtil
 	}
 
 
-	// Can be used to find zcashd/zcash-cli if it is not found in the same place as the wallet JAR
+	// Can be used to find zerod/zero-cli if it is not found in the same place as the wallet JAR
 	// Null if not found
-	public static File findZCashCommand(String command)
+	public static File findZeroCommand(String command)
 		throws IOException
 	{
 	    File f;
 	    
-	    // Try with system property zcash.location.dir - may be specified by caller
-	    String ZCashLocationDir = System.getProperty("zero.location.dir");
-	    if ((ZCashLocationDir != null) && (ZCashLocationDir.trim().length() > 0))
+	    // Try with system property zero.location.dir - may be specified by caller
+	    String ZeroLocationDir = System.getProperty("zero.location.dir");
+	    if ((ZeroLocationDir != null) && (ZeroLocationDir.trim().length() > 0))
 	    {
-	        f = new File(ZCashLocationDir + File.separator + command);
+	        f = new File(ZeroLocationDir + File.separator + command);
 	        if (f.exists() && f.isFile())
 	        {
 	            return f.getCanonicalFile();
@@ -290,7 +290,7 @@ public class OSUtil
 			
 	    } else if (os == OS_TYPE.WINDOWS)
 	    {
-	    	// A probable Windows directory is a ZCash dir in Program Files
+	    	// A probable Windows directory is a Zero dir in Program Files
 	    	String programFiles = System.getenv("PROGRAMFILES");
 	    	if ((programFiles != null) && (!programFiles.isEmpty()))
 	    	{

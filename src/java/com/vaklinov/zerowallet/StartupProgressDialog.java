@@ -1,5 +1,5 @@
 // Code was originally written by developer - https://github.com/zlatinb
-// Taken from repository https://github.com/zlatinb/zcash-swing-wallet-ui under an MIT license
+// Taken from repository https://github.com/zlatinb/zero-swing-wallet-ui under an MIT license
 package com.vaklinov.zerowallet;
 
 import java.awt.BorderLayout;
@@ -20,7 +20,7 @@ import javax.swing.SwingUtilities;
 
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
-import com.vaklinov.zerowallet.ZCashClientCaller.WalletCallException;
+import com.vaklinov.zerowallet.ZeroClientCaller.WalletCallException;
 
 
 public class StartupProgressDialog extends JFrame {
@@ -36,9 +36,9 @@ public class StartupProgressDialog extends JFrame {
     private BorderLayout southPanelLayout = new BorderLayout();
     private JProgressBar progressBar = new JProgressBar();
     
-    private final ZCashClientCaller clientCaller;
+    private final ZeroClientCaller clientCaller;
     
-    public StartupProgressDialog(ZCashClientCaller clientCaller) 
+    public StartupProgressDialog(ZeroClientCaller clientCaller) 
     {
         this.clientCaller = clientCaller;
         
@@ -46,16 +46,16 @@ public class StartupProgressDialog extends JFrame {
         contentPane.setLayout(borderLayout1);
         southPanel.setLayout(southPanelLayout);
         southPanel.setBorder(BorderFactory.createEmptyBorder(0, 16, 16, 16));
-		JLabel zcashWalletLabel = new JLabel(
+		JLabel zeroWalletLabel = new JLabel(
 			"<html><span style=\"font-weight:bold;font-size:2.65em\">" + 
 		    "Ƶero Wallet</span></html>");
-		zcashWalletLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-		zcashWalletLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-		zcashWalletLabel.setIcon(new ImageIcon(StartupProgressDialog.class.getResource("/images/zero-logo-black-yellow.png")));
-		zcashWalletLabel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+		zeroWalletLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+		zeroWalletLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+		zeroWalletLabel.setIcon(new ImageIcon(StartupProgressDialog.class.getResource("/images/zero-logo-black-yellow.png")));
+		zeroWalletLabel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 		// todo - place in a panel with flow center
 		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 1, 1));
-		tempPanel.add(zcashWalletLabel);
+		tempPanel.add(zeroWalletLabel);
 		contentPane.add(tempPanel, BorderLayout.CENTER);
         contentPane.add(southPanel, BorderLayout.SOUTH);
         progressBar.setIndeterminate(true);
@@ -80,8 +80,8 @@ public class StartupProgressDialog extends JFrame {
 //                performOSXBundleLaunch();
 //        }
         
-        Log.info("Splash: checking if zcashd is already running...");
-        boolean shouldStartZCashd = false;
+        Log.info("Splash: checking if zerod is already running...");
+        boolean shouldStartZerod = false;
         try {
             clientCaller.getDaemonRawRuntimeInfo();
         } catch (IOException e) { 
@@ -90,22 +90,22 @@ public class StartupProgressDialog extends JFrame {
         	if (e.getMessage() != null && 
         		e.getMessage().toLowerCase(Locale.ROOT).contains("error: couldn't connect to server"))
         	{
-        		shouldStartZCashd = true;
+        		shouldStartZerod = true;
         	}
         }
         
-        if (!shouldStartZCashd) {
-        	Log.info("Splash: zcashd already running...");
+        if (!shouldStartZerod) {
+        	Log.info("Splash: zerod already running...");
             // What if started by hand but taking long to initialize???
 //            doDispose();
 //            return;
         } else
         {
-        	Log.info("Splash: zcashd will be started...");
+        	Log.info("Splash: zerod will be started...");
         }
         
         final Process daemonProcess = 
-        	shouldStartZCashd ? clientCaller.startDaemon() : null;
+        	shouldStartZerod ? clientCaller.startDaemon() : null;
         
         Thread.sleep(POLL_PERIOD); // just a little extra
         
@@ -143,7 +143,7 @@ public class StartupProgressDialog extends JFrame {
         if (daemonProcess != null) // Shutdown only if we started it
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-            	Log.info("Stopping zcashd because we started it - now it is alive: " + 
+            	Log.info("Stopping zerod because we started it - now it is alive: " + 
                 		           StartupProgressDialog.this.isAlive(daemonProcess));
                 try 
                 {
@@ -153,7 +153,7 @@ public class StartupProgressDialog extends JFrame {
 	                while (!StartupProgressDialog.this.waitFor(daemonProcess, 3000))
 	                {
 	                	long end = System.currentTimeMillis();
-	                	Log.info("Waiting for " + ((end - start) / 1000) + " seconds for zcashd to exit...");
+	                	Log.info("Waiting for " + ((end - start) / 1000) + " seconds for zerod to exit...");
 	                	
 	                	if (end - start > 10 * 1000)
 	                	{
@@ -168,14 +168,14 @@ public class StartupProgressDialog extends JFrame {
 	                }
 	            
 	                if (StartupProgressDialog.this.isAlive(daemonProcess)) {
-	                	Log.info("zcashd is still alive although we tried to stop it. " +
+	                	Log.info("zerod is still alive although we tried to stop it. " +
 	                                           "Hopefully it will stop later!");
-	                        //System.out.println("zcashd is still alive, killing forcefully");
+	                        //System.out.println("zerod is still alive, killing forcefully");
 	                        //daemonProcess.destroyForcibly();
 	                    } else
-	                    	Log.info("zcashd shut down successfully");
+	                    	Log.info("zerod shut down successfully");
                 } catch (Exception bad) {
-                	Log.error("Couldn't stop zcashd!", bad);
+                	Log.error("Couldn't stop zerod!", bad);
                 }
             }
         });
