@@ -87,8 +87,9 @@ public class WalletPreferences {
 			defaultCommandLineToolsDir = commandLineToolsDirDefault;
 		else
 			defaultCommandLineToolsDir = System.getenv("APPDATA") + "\\Zero";
-
-		if (!Files.isDirectory(Paths.get(defaultCommandLineToolsDir))) {
+	
+		commandLineToolsDir = preferences.getString("commandLineToolsDir", defaultCommandLineToolsDir);
+		if (!zeroFilesExist(commandLineToolsDir)) {
 			Log.info("Will ask for the directory where the command line tools are");
 			JOptionPane.showMessageDialog(new JFrame(),
 					"Please select the directory where the command line utils are installed:\nzerod, zero-cli and zero-tx",
@@ -104,19 +105,19 @@ public class WalletPreferences {
 			dirChooser.setAcceptAllFileFilterUsed(false);
 			while (dirChooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
 				;
-			defaultCommandLineToolsDir = dirChooser.getCurrentDirectory().getAbsolutePath() + (os == OS_TYPE.WINDOWS ? "\\" : "/") + dirChooser.getSelectedFile().getName();
+			commandLineToolsDir = dirChooser.getCurrentDirectory().getAbsolutePath() + (os == OS_TYPE.WINDOWS ? "\\" : "/") + dirChooser.getSelectedFile().getName();
 		}
 
-		commandLineToolsDir = preferences.getString("commandLineToolsDir", defaultCommandLineToolsDir);
 		if (preferences.get("commandLineToolsDir") == null) {
 			mustSave = true;
-			preferences.add("commandLineToolsDir", defaultCommandLineToolsDir);
+			preferences.add("commandLineToolsDir", commandLineToolsDir);
 		}
 		
 		Log.info("Preferences");
 		Log.info("mainnetRPCPort : " + Integer.toString(mainnetRPCPort));
 		Log.info("testnetRPCPort : " + Integer.toString(mainnetRPCPort));
 		Log.info("commandLineToolsDir : " + commandLineToolsDir);
+		savePreferences();
 	}
 	
 	public Integer mainnetRPCPort() {
@@ -163,7 +164,28 @@ public class WalletPreferences {
 		mustSave = true;
 		this.commandLineToolsDir = commandLineToolsDir;
 	}
-	
+
+	private File zerocli, zerod;
+
+	public boolean zeroFilesExist(String installDir) {
+		File dir = new File(installDir);
+
+		zerocli = new File(dir, OSUtil.getZeroCli());
+		if (!zerocli.exists())
+		{
+			return false;
+		}
+
+		zerod = new File(dir, OSUtil.getZerod());
+		if (!zerod.exists())
+		{
+				return false;
+		}
+
+		return true;
+	}
+
+
 	public void savePreferences() {
 		Writer preferencesWriter = null;
 		if (mustSave) {
