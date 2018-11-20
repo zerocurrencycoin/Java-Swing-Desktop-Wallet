@@ -92,21 +92,21 @@ public class ZeroWallet
     private DashboardPanel   dashboard;
     private AddressesPanel   addresses;
     private SendCashPanel    sendPanel;
-    
+
     private static WalletPreferences preferences;
-    
+
     JTabbedPane tabs;
 
     public ZeroWallet(StartupProgressDialog progressDialog)
         throws IOException, InterruptedException, WalletCallException
     {
-        super("Ƶero Swing Wallet - 0.75 (beta)");
+        super("Ƶero Swing Wallet - 0.76 (beta)");
 
         if (progressDialog != null)
         {
         	progressDialog.setProgressText("Starting GUI wallet...");
         }
-        
+
         ClassLoader cl = this.getClass().getClassLoader();
 
         this.setIconImage(new ImageIcon(cl.getResource("images/zero-logo-black-yellow.png")).getImage());
@@ -167,19 +167,19 @@ public class ZeroWallet
         wallet.add(menuItemShowPrivateKey = new JMenuItem("Show private key...", KeyEvent.VK_P));
         menuItemShowPrivateKey.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, accelaratorKeyMask));
         wallet.add(menuItemImportOnePrivateKey = new JMenuItem("Import one private key...", KeyEvent.VK_N));
-        menuItemImportOnePrivateKey.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, accelaratorKeyMask));        
+        menuItemImportOnePrivateKey.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, accelaratorKeyMask));
         mb.add(wallet);
 
         // Some day the extras menu will be populated with less essential functions
         //JMenu extras = new JMenu("Extras");
         //extras.setMnemonic(KeyEvent.VK_ NOT R);
         //extras.add(menuItemAddressBook = new JMenuItem("Address book...", KeyEvent.VK_D));
-        //menuItemAddressBook.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, accelaratorKeyMask));        
+        //menuItemAddressBook.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, accelaratorKeyMask));
         //mb.add(extras);
 
         // TODO: Temporarily disable encryption until further notice - Oct 24 2016
         menuItemEncrypt.setEnabled(false);
-                        
+
         this.setJMenuBar(mb);
 
         // Add listeners etc.
@@ -213,7 +213,7 @@ public class ZeroWallet
             }
         );
 
-        menuItemBackup.addActionListener(   
+        menuItemBackup.addActionListener(
         	new ActionListener()
             {
                 @Override
@@ -223,7 +223,7 @@ public class ZeroWallet
                 }
             }
         );
-        
+
         menuItemEncrypt.addActionListener(
             new ActionListener()
             {
@@ -235,7 +235,7 @@ public class ZeroWallet
             }
         );
 
-        menuItemExportKeys.addActionListener(   
+        menuItemExportKeys.addActionListener(
             new ActionListener()
             {
                 @Override
@@ -245,8 +245,8 @@ public class ZeroWallet
                 }
             }
        );
-        
-       menuItemImportKeys.addActionListener(   
+
+       menuItemImportKeys.addActionListener(
             new ActionListener()
             {
                 @Override
@@ -256,8 +256,8 @@ public class ZeroWallet
                 }
             }
        );
-       
-       menuItemShowPrivateKey.addActionListener(   
+
+       menuItemShowPrivateKey.addActionListener(
             new ActionListener()
             {
                 @Override
@@ -267,8 +267,8 @@ public class ZeroWallet
                 }
             }
        );
-       
-       menuItemImportOnePrivateKey.addActionListener(   
+
+       menuItemImportOnePrivateKey.addActionListener(
            new ActionListener()
            {
                @Override
@@ -278,7 +278,7 @@ public class ZeroWallet
                }
            }
        );
-       
+
         // Close operation
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter()
@@ -329,7 +329,7 @@ public class ZeroWallet
                     "Disclaimer", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        
+
         // Finally dispose of the progress dialog
         if (progressDialog != null)
         {
@@ -342,20 +342,20 @@ public class ZeroWallet
     	Log.info("Exiting ...");
 
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        
+
         this.dashboard.stopThreadsAndTimers();
         this.addresses.stopThreadsAndTimers();
         this.sendPanel.stopThreadsAndTimers();
 
 //        Integer blockchainProgress = this.dashboard.getBlockchainPercentage();
-//        
+//
 //        if ((blockchainProgress != null) && (blockchainProgress >= 100))
 //        {
 //	        this.dashboard.waitForEndOfThreads(3000);
 //	        this.addresses.waitForEndOfThreads(3000);
 //	        this.sendPanel.waitForEndOfThreads(3000);
 //        }
-        
+
         ZeroWallet.this.setVisible(false);
         ZeroWallet.this.dispose();
 
@@ -368,9 +368,9 @@ public class ZeroWallet
         try
         {
         	OS_TYPE os = OSUtil.getOSType();
-        	
+
         	preferences = new WalletPreferences(os);
-        	
+
         	Log.info("Starting Ƶero Swing Wallet ...");
         	Log.info("OS: " + System.getProperty("os.name") + " = " + os);
         	Log.info("Current directory: " + new File(".").getCanonicalPath());
@@ -390,7 +390,7 @@ public class ZeroWallet
         		{
         			UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
         		} else
-        		{            
+        		{
         			for (LookAndFeelInfo ui : UIManager.getInstalledLookAndFeels())
         			{
         				Log.info("Available look and feel: " + ui.getName() + " " + ui.getClassName());
@@ -401,14 +401,14 @@ public class ZeroWallet
         				};
         			}
         		}
-            
+
             // If zerod is currently not running, do a startup of the daemon as a child process
             // It may be started but not ready - then also show dialog
-            ZeroInstallationObserver initialInstallationObserver = 
+            ZeroInstallationObserver initialInstallationObserver =
             	new ZeroInstallationObserver(preferences.commandLineToolsDir());
             DaemonInfo zerodInfo = initialInstallationObserver.getDaemonInfo();
             initialInstallationObserver = null;
-            
+
             ZeroClientCaller initialClientCaller = new ZeroClientCaller(preferences.commandLineToolsDir());
             boolean daemonStartInProgress = false;
             try
@@ -419,7 +419,7 @@ public class ZeroWallet
             		// If more than 20 minutes behind in the blockchain - startup in progress
             		if ((System.currentTimeMillis() - info.lastBlockDate.getTime()) > (20 * 60 * 1000))
             		{
-            			Log.info("Current blockchain synchronization date is"  + 
+            			Log.info("Current blockchain synchronization date is"  +
             		                       new Date(info.lastBlockDate.getTime()));
             			daemonStartInProgress = true;
             		}
@@ -433,7 +433,7 @@ public class ZeroWallet
                 	daemonStartInProgress = true;
                 }
             }
-            
+
             StartupProgressDialog startupBar = null;
             if ((zerodInfo.status != DAEMON_STATUS.RUNNING) || (daemonStartInProgress))
             {
@@ -444,7 +444,7 @@ public class ZeroWallet
 	            startupBar.waitForStartup();
             }
             initialClientCaller = null;
-            
+
             // Main GUI is created here
             ZeroWallet ui = new ZeroWallet(startupBar);
             ui.setVisible(true);
@@ -479,7 +479,7 @@ public class ZeroWallet
                 JOptionPane.showMessageDialog(
                     null,
                     "There was a problem communicating with the Ƶero daemon/wallet. \n" +
-                    "Please ensure that the Ƶero server zerod is started (e.g. via \n" + 
+                    "Please ensure that the Ƶero server zerod is started (e.g. via \n" +
                     "command  \"zerod --daemon\"). Error message is: \n" +
                      wce.getMessage() +
                     "See the console output for more detailed error information!",
