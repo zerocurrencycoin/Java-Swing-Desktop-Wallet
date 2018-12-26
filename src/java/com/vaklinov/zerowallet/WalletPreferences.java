@@ -99,12 +99,13 @@ public class WalletPreferences {
 			if (os == OS_TYPE.WINDOWS)
 				dirChooser.setCurrentDirectory(new java.io.File("C:"));
 			else
-				dirChooser.setCurrentDirectory(new java.io.File("/"));
+				dirChooser.setCurrentDirectory(new java.io.File("~/"));
 			dirChooser.setDialogTitle("Select the directory where the command line tools are");
 			dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			dirChooser.setAcceptAllFileFilterUsed(false);
 			while (dirChooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
 				;
+			mustSave = true;
 			commandLineToolsDir = dirChooser.getCurrentDirectory().getAbsolutePath() + (os == OS_TYPE.WINDOWS ? "\\" : "/") + dirChooser.getSelectedFile().getName();
 		}
 
