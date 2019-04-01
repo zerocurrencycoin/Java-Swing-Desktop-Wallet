@@ -451,11 +451,15 @@ public class ZeroClientCaller
 		throws WalletCallException, IOException, InterruptedException
 	{
 		String strResponse = "";
-			if (isSapling) {
-				strResponse = this.executeCommandAndGetSingleStringResponse("z_getnewaddress", wrapStringParameter("sapling"));
-			}
-			else {
-	    	strResponse = this.executeCommandAndGetSingleStringResponse((isZAddress ? "z_" : "") + "getnewaddress");
+			if (!isZAddress) {
+				strResponse = this.executeCommandAndGetSingleStringResponse("getnewaddress");
+			} else {
+				if (isSapling) {
+					strResponse = this.executeCommandAndGetSingleStringResponse("z_getnewaddress", wrapStringParameter("sapling"));
+				}
+				else {
+		    	strResponse = this.executeCommandAndGetSingleStringResponse("z_getnewaddress", wrapStringParameter("sprout"));
+				}
 			}
 		return strResponse.trim();
 	}
