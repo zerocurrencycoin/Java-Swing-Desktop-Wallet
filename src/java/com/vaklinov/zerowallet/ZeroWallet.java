@@ -100,7 +100,7 @@ public class ZeroWallet
     public ZeroWallet(StartupProgressDialog progressDialog)
         throws IOException, InterruptedException, WalletCallException
     {
-        super("Ƶero Swing Wallet - 0.77 (beta)");
+        super("Ƶero Swing Wallet - 0.78 (beta)");
 
         if (progressDialog != null)
         {
