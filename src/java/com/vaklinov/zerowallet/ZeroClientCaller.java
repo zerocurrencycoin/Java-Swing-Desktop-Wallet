@@ -447,19 +447,14 @@ public class ZeroClientCaller
 	}
 
 
-	public synchronized String createNewAddress(boolean isZAddress, boolean isSapling)
+	public synchronized String createNewAddress(boolean isZAddress)
 		throws WalletCallException, IOException, InterruptedException
 	{
 		String strResponse = "";
 			if (!isZAddress) {
 				strResponse = this.executeCommandAndGetSingleStringResponse("getnewaddress");
 			} else {
-				if (isSapling) {
-					strResponse = this.executeCommandAndGetSingleStringResponse("z_getnewaddress", wrapStringParameter("sapling"));
-				}
-				else {
-		    	strResponse = this.executeCommandAndGetSingleStringResponse("z_getnewaddress", wrapStringParameter("sprout"));
-				}
+				strResponse = this.executeCommandAndGetSingleStringResponse("z_getnewaddress");
 			}
 		return strResponse.trim();
 	}

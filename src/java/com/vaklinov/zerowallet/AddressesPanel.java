@@ -96,8 +96,6 @@ public class AddressesPanel
 
 		JButton newTAddressButton = new JButton("New T (Transparent) address");
 		buttonPanel.add(newTAddressButton);
-		JButton newZAddressButton = new JButton("New Z (Private-Sprout) address");
-		buttonPanel.add(newZAddressButton);
 		JButton newSaplingAddressButton = new JButton("New Z (Private-Sapling) address");
 		buttonPanel.add(newSaplingAddressButton);
 		buttonPanel.add(new JLabel("           "));
@@ -195,15 +193,7 @@ public class AddressesPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				createNewAddress(false,false);
-			}
-		});
-
-		newZAddressButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				createNewAddress(true,false);
+				createNewAddress(false);
 			}
 		});
 
@@ -211,7 +201,7 @@ public class AddressesPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				createNewAddress(true,true);
+				createNewAddress(true);
 			}
 		});
 
@@ -234,7 +224,7 @@ public class AddressesPanel
 	}
 
 
-	private void createNewAddress(boolean isZAddress, boolean isSapling)
+	private void createNewAddress(boolean isZAddress)
 	{
 		try
 		{
@@ -253,7 +243,7 @@ public class AddressesPanel
 				this.clientCaller.unlockWallet(pd.getPassword());
 			}
 
-			String address = this.clientCaller.createNewAddress(isZAddress, isSapling);
+			String address = this.clientCaller.createNewAddress(isZAddress);
 
 			// Lock the wallet again
 			if (bEncryptedWallet && isZAddress)
@@ -263,7 +253,7 @@ public class AddressesPanel
 
 			JOptionPane.showMessageDialog(
 				this.getRootPane().getParent(),
-				"A new " + (isZAddress ? (isSapling ? "Z (Private-Sapling)" : "Z (Private-Sprout)") : "T (Transparent)")
+				"A new " + (isZAddress ? ("Z (Private-Sapling)" : "T (Transparent)")
 				+ " address has been created cuccessfully:\n" + address,
 				"Address created", JOptionPane.INFORMATION_MESSAGE);
 
