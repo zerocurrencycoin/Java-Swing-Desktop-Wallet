@@ -253,7 +253,7 @@ public class AddressesPanel
 
 			JOptionPane.showMessageDialog(
 				this.getRootPane().getParent(),
-				"A new " + (isZAddress ? ("Z (Private-Sapling)" : "T (Transparent)")
+				"A new " + (isZAddress ? "Z (Private-Sapling)" : "T (Transparent)")
 				+ " address has been created cuccessfully:\n" + address,
 				"Address created", JOptionPane.INFORMATION_MESSAGE);
 
